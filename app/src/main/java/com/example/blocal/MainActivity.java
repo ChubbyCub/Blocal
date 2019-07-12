@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int MY_REQUEST_CODE = 7117; // any num you want
+    private static final int MY_REQUEST_CODE = 5566; // any num you want
     List<AuthUI.IdpConfig> providers;
     Button btn_sign_out;
     @Override
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Init provider
         providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                        .setLogo(R.drawable.bart)
                 .setTheme(R.style.MyTheme)
                 .build(),MY_REQUEST_CODE
         );
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 // set button signout
                 btn_sign_out.setEnabled(true);
             } else {
-                Toast.makeText(this, ""+response.getError(), Toast.LENGTH_SHORT);
+                Toast.makeText(this, ""+response.getError().getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
