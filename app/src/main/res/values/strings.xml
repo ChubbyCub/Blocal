@@ -2,4 +2,5 @@
     <string name="app_name">Blocal</string>
     <string name="facebook_application_id" translatable="false">348504412508682</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb348504412508682</string>
+    <string name="img_content">Product Image</string>
 </resources>
