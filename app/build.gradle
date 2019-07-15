@@ -42,7 +42,10 @@ dependencies {
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.10.7') {
         exclude group: 'org.json', module: 'json' //provided by Android natively
     }
+
     implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
