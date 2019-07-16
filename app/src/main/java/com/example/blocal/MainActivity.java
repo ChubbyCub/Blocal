@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Log.d("Document downloaded: ", document.getId() + " => " + document.getData());
                             }
                             displayBottomNav();
-                            displayProductList(products);
+                            // displayProductList(products);
                         } else {
                             Log.w("ERROR: ", task.getException());
                         }
@@ -111,22 +111,26 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void displayProductList(List<String> products) {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                products
-        );
+    private void displayProductList() {
 
-        ListView productList = (ListView)findViewById(R.id.product_list);
-        productList.setAdapter(arrayAdapter);
-        productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // display product details when clicked...
-            }
-        });
     }
+
+//    private void displayProductList(List<String> products) {
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+//                this,
+//                android.R.layout.simple_list_item_1,
+//                products
+//        );
+//
+//        ListView productList = (ListView)findViewById(R.id.product_list);
+//        productList.setAdapter(arrayAdapter);
+//        productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                // display product details when clicked...
+//            }
+//        });
+//    }
 
 
     private void showSignInOptions() {
