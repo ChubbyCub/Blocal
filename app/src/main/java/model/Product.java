@@ -1,7 +1,7 @@
-package com.example.blocal;
+package model;
 
 public class Product {
-    private String title;
+    private String name;
     private double price;
     private String description;
     private String location;
@@ -11,20 +11,20 @@ public class Product {
 
     }
 
-    public Product(String title, double price, String description, String location, String userId) {
-        this.title = title;
+    public Product(String name, double price, String description, String location, String userId) {
+        this.name = name;
         this.price = price;
         this.description = description;
         this.location = location;
         this.userId = userId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {
@@ -59,4 +59,3 @@ public class Product {
         this.userId = userId;
     }
 }
-
