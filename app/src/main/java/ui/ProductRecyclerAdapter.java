@@ -1,7 +1,9 @@
 package ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,15 +40,24 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = productList.get(position);
 
-
         holder.name.setText(product.getName());
         holder.location.setText(product.getLocation());
 
-        String imageUrl = product.getImageUrl();
-        Picasso.get().load(imageUrl).fit().into(holder.image);
+        String photoURL = product.getPhotoURL();
+
+        // remove the placeholder after testing
+        Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().into(holder.image);
 
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
         holder.dateAdded.setText(timeAgo);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Product card: ", "is clicked");
+                context.startActivity(new Intent(context, ProductDetailActivity.class));
+            }
+        });
     }
 
     @Override
@@ -69,4 +80,6 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
             image = itemView.findViewById(R.id.product_image_list);
         }
     }
+
+
 }

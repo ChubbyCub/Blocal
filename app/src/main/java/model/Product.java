@@ -10,20 +10,20 @@ public class Product {
     private String location;
     private String userId;
     private Timestamp dateAdded;
-    private String photoUrl;
+    private String photoURL;
 
     public Product() {
 
     }
 
-    public Product(String name, double price, String description, String location, String userId, Timestamp dateAdded, String photoUrl) {
+    public Product(String name, double price, String description, String location, String userId, Timestamp dateAdded, String photoURL) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.location = location;
         this.userId = userId;
         this.dateAdded = dateAdded;
-        this.photoUrl = photoUrl;
+        this.photoURL = photoURL;
     }
 
     public String getName() {
@@ -74,11 +74,11 @@ public class Product {
         this.dateAdded = dateAdded;
     }
 
-    public String getImageUrl() {
-        return photoUrl;
+    public String getPhotoURL() {
+        return photoURL;
     }
 
-    public void setImageUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
     }
 }

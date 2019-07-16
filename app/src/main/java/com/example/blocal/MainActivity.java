@@ -3,6 +3,7 @@ package com.example.blocal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -78,37 +79,37 @@ public class MainActivity extends AppCompatActivity {
         productList = new ArrayList<>();
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         if (!isSignedIn()) {
             showSignInOptions();
         } else {
-            // displayBottomNav();
+            displayBottomNav();
             displayAllProducts();
             // displayImage();
             // displaySignOutButton();
         }
     }
 
-//    private void displayBottomNav() {
-//        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
-//        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
-//            @Override
-//            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
-//                switch(menuItem.getItemId()) {
-//                    case R.id.action_add:
-//                        Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.id.action_account:
-//                        Toast.makeText(getApplicationContext(), "Action Account clicked", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    case R.id.action_home:
-//                        Toast.makeText(getApplicationContext(), "Action Home Clicked", Toast.LENGTH_SHORT).show();
-//                        break;
-//                }
-//            }
-//        });
-//    }
+    private void displayBottomNav() {
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
+                switch(menuItem.getItemId()) {
+                    case R.id.action_add:
+                        Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_account:
+                        Toast.makeText(getApplicationContext(), "Action Account clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_home:
+                        Toast.makeText(getApplicationContext(), "Action Home Clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+    }
 
     private void displayAllProducts() {
         collectionReference
@@ -160,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == FIREBASE_LOGIN_CODE) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
+                displayBottomNav();
                 displayAllProducts();
-                // displaySignOutButton()
             } else {
                 Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
             }
