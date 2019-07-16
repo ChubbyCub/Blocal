@@ -1,22 +1,29 @@
 package model;
 
+import com.google.firebase.Timestamp;
+
+
 public class Product {
     private String name;
     private double price;
     private String description;
     private String location;
     private String userId;
+    private Timestamp dateAdded;
+    private String photoUrl;
 
     public Product() {
 
     }
 
-    public Product(String name, double price, String description, String location, String userId) {
+    public Product(String name, double price, String description, String location, String userId, Timestamp dateAdded, String photoUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.location = location;
         this.userId = userId;
+        this.dateAdded = dateAdded;
+        this.photoUrl = photoUrl;
     }
 
     public String getName() {
@@ -57,5 +64,21 @@ public class Product {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Timestamp getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(Timestamp dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
+    public String getImageUrl() {
+        return photoUrl;
+    }
+
+    public void setImageUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }
