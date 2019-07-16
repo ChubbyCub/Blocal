@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.blocal.ProductDetailActivity;
 import com.example.blocal.R;
 import com.squareup.picasso.Picasso;
 
@@ -46,7 +47,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
         String photoURL = product.getPhotoURL();
 
         // remove the placeholder after testing
-        Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().into(holder.image);
+        Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().centerCrop().into(holder.image);
 
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
         holder.dateAdded.setText(timeAgo);
