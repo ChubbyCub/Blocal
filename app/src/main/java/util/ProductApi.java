@@ -4,6 +4,7 @@ import android.app.Application;
 
 public class ProductApi extends Application {
     private String userEmail;
+    private String userDisplayName;
     private String userId;
 
 
@@ -32,5 +33,13 @@ public class ProductApi extends Application {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserDisplayName() {
+        return userDisplayName;
+    }
+
+    public void setUserDisplayName(String userDisplayName) {
+        this.userDisplayName = userDisplayName;
     }
 }

@@ -4,25 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -36,33 +24,31 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.Product;
 import ui.ProductRecyclerAdapter;
+import util.ProductApi;
 
 public class MainActivity extends AppCompatActivity {
     private static final int FIREBASE_LOGIN_CODE = 5566; // any num you want
 
-    // ImageView downloadedImage;
-
-    // set up attributes for recycler view
     private List<Product> productList;
     private RecyclerView recyclerView;
     private ProductRecyclerAdapter productRecyclerAdapter;
     private FirebaseFirestore db;
-    private CollectionReference collectionReference;
+    private CollectionReference collectionReferenceProduct;
+    private CollectionReference collectionReferenceUser;
+    private FirebaseAuth firebaseAuth;
 
     private boolean isSignedIn() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -77,7 +63,11 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         db = FirebaseFirestore.getInstance();
-        collectionReference = db.collection("products");
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        collectionReferenceProduct = db.collection("products");
+        collectionReferenceUser = db.collection("users");
+
         productList = new ArrayList<>();
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -112,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAllProducts() {
-        collectionReference
+        collectionReferenceProduct
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -161,12 +151,51 @@ public class MainActivity extends AppCompatActivity {
             // TODO: create a user right here
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
+                addNewUser(firebaseAuth);
                 displayBottomNav();
                 displayAllProducts();
             } else {
                 Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void addNewUser(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+
+        final String userId = user.getUid();
+        final String userDisplayName = user.getDisplayName();
+        final String userEmail = user.getEmail();
+        // Create a user Map so we can create a user in the user collection
+        Map<String, String> userObj = new HashMap<>();
+        userObj.put("userId", userId);
+        userObj.put("userDisplayName", userDisplayName);
+        userObj.put("userEmail", userEmail);
+
+        // save the user to a collection
+        collectionReferenceUser.add(userObj)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        documentReference.get()
+                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        ProductApi productApi = ProductApi.getInstance(); // global Api
+                                        productApi.setUserId(userId);
+                                        productApi.setUserEmail(userDisplayName);
+                                        productApi.setUserEmail(userEmail);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "" + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // rewrite this method to use the udemy signout code
