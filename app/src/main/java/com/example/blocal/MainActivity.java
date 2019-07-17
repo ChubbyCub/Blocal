@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             displayBottomNav();
             displayAllProducts();
-            // displayImage();
-            // displaySignOutButton();
         }
     }
 
@@ -159,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == FIREBASE_LOGIN_CODE) {
+            // TODO: create a user right here
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 displayBottomNav();
@@ -197,44 +195,5 @@ public class MainActivity extends AppCompatActivity {
 //                });
 //            }
 //        });
-//    }
-
-//    private void displayImage() {
-//        // reset this somehow to display the image
-//        downloadedImage = (ImageView) findViewById(R.id.imageView);
-//
-//        ImageDownloader task = new ImageDownloader();
-//        String link = "https://firebasestorage.googleapis.com/v0/b/blocal-47851.appspot.com/o/Test%2" +
-//                "Fshoes.jpg?alt=media&token=79a6155b-13f5-4bad-b3ad-acb61fd02b86";
-//
-//        try {
-//            Bitmap myImage = task.execute(link).get();
-//            downloadedImage.setImageBitmap(myImage);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
-//    private static class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-//
-//        @Override
-//        protected Bitmap doInBackground(String... urls) {
-//            try {
-//                URL url = new URL(urls[0]);
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                connection.connect();
-//                InputStream inputStream = connection.getInputStream();
-//                // convert the data that was downloaded to an image
-//                Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
-//                return myBitmap;
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//                return null;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
 //    }
 }

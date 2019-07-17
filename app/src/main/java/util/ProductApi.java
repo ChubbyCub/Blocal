@@ -6,6 +6,7 @@ public class ProductApi extends Application {
     private String userEmail;
     private String userId;
 
+
     private static ProductApi instance;
 
     public static ProductApi getInstance() {

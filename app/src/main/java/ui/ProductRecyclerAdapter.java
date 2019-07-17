@@ -46,7 +46,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
 
         String photoURL = product.getPhotoURL();
 
-        // remove the placeholder after testing
+        // TODO: remove the placeholder after testing
         Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().centerCrop().into(holder.image);
 
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
