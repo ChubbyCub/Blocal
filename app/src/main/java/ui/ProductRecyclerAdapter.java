@@ -39,7 +39,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = productList.get(position);
+        final Product product = productList.get(position);
 
         holder.name.setText(product.getName());
         holder.location.setText(product.getLocation());
@@ -56,7 +56,8 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
             @Override
             public void onClick(View view) {
                 Log.i("Product card: ", "is clicked");
-                context.startActivity(new Intent(context, ProductDetailActivity.class));
+                Intent intent = new Intent(context, ProductDetailActivity.class).putExtra("product", product);
+                context.startActivity(intent);
             }
         });
     }

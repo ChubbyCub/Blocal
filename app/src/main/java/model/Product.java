@@ -1,9 +1,12 @@
 package model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.Timestamp;
 
 
-public class Product {
+public class Product implements Parcelable {
     private String name;
     private double price;
     private String description;
@@ -16,7 +19,8 @@ public class Product {
 
     }
 
-    public Product(String name, double price, String description, String location, String userId, Timestamp dateAdded, String photoURL) {
+    public Product(String name, double price, String description, String location, String userId,
+                   Timestamp dateAdded, String photoURL) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -80,5 +84,42 @@ public class Product {
 
     public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeDouble(price);
+        parcel.writeString(description);
+        parcel.writeString(location);
+        parcel.writeString(userId);
+        parcel.writeParcelable(dateAdded, i);
+        parcel.writeString(photoURL);
+    }
+
+    public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
+
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+
+    private Product(Parcel in) {
+        name = in.readString();
+        price = in.readDouble();
+        description = in.readString();
+        location = in.readString();
+        userId = in.readString();
+        dateAdded = in.readParcelable(Timestamp.class.getClassLoader());
+        photoURL = in.readString();
     }
 }
