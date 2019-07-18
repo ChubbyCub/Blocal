@@ -1,5 +1,6 @@
 package com.example.blocal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.pm.ActivityInfo;
@@ -10,6 +11,16 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -23,8 +34,6 @@ public class ProductDetailActivity extends AppCompatActivity {
     private TextView productDescription;
     private TextView productPrice;
     private ImageView productImage;
-    private TextView sellerName;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Product product = getIntent().getParcelableExtra("product");
+        Log.i("Name of the product card: ", product.getName());
 
         productName = (TextView) findViewById(R.id.product_name_main);
         productLocation = (TextView) findViewById(R.id.product_location_main);
@@ -40,14 +50,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         productImage = (ImageView) findViewById(R.id.product_image_main);
         productDescription = findViewById(R.id.product_description_main);
         productPrice = findViewById(R.id.product_price_main);
-        sellerName = findViewById(R.id.seller_name_main);
+
 
         productName.setText(product.getName());
         productLocation.setText(product.getLocation());
         productDescription.setText(product.getDescription());
         productPrice.setText("$" + Double.toString(product.getPrice()));
 
-        // TODO: set user name
+        setUserName(product.getUserId());
 
         // TODO: find a way to refactor this piece of code to translate time
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
@@ -57,7 +67,32 @@ public class ProductDetailActivity extends AppCompatActivity {
         // TODO: find a way to refactor this piece of code to edit picture
         String photoURL = product.getPhotoURL();
         Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().centerCrop().into(productImage);
+    }
 
-        Log.i("Name of the product card: ", product.getName());
+    private void setUserName(String userId) {
+        Log.d("does this function get called?", "Yes");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference users = db.collection("users");
+        Query query = users.whereEqualTo("userId", userId);
+
+        query.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            for(QueryDocumentSnapshot document : task.getResult()) {
+                                String userName = document.get("userDisplayName").toString();
+                                TextView sellerName = findViewById(R.id.seller_name_main);
+                                sellerName.setText(userName);
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("ERROR: ", e.getMessage());
+                    }
+                });
     }
 }
