@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,20 +35,22 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     @Override
     public ProductRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.product_row, parent, false);
+
         return new ViewHolder(view, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         final Product product = productList.get(position);
 
         holder.name.setText(product.getName());
         holder.location.setText(product.getLocation());
 
+
         String photoURL = product.getPhotoURL();
 
-        // TODO: remove the placeholder after testing
-        Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().centerCrop().into(holder.image);
+        Picasso.get().load(photoURL).placeholder(R.drawable.ic_image_placeholder).fit().centerCrop().into(holder.image);
 
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
         holder.dateAdded.setText(timeAgo);
@@ -60,6 +63,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -70,6 +74,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name, location, dateAdded;
+        public ProgressBar progressBar;
         public ImageView image;
 
         public ViewHolder(@NonNull View itemView, Context ctx) {

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardCornerRadius="8dp"
-    >
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:orientation="vertical"
@@ -24,34 +23,60 @@
 
         <TextView
             android:id="@+id/product_name_list"
-            android:padding="10dp"
             android:text="Product Name"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/product_location_list"
-            android:padding="10dp"
-            android:text="Location"
-            android:paddingTop="15dp"
-            android:paddingEnd="15dp"
-            android:paddingStart="10dp"
-            android:textSize="12sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/product_timestamp_list"
-            android:padding="5dp"
-            android:text="Date posted"
-            android:textSize="12sp"
-            android:paddingStart="10dp"
-            android:paddingEnd="15dp"
-            android:textStyle="italic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:src="@drawable/ic_location" />
+
+            <TextView
+                android:id="@+id/product_location_list"
+                android:padding="5dp"
+                android:text="Location"
+                android:paddingTop="2dp"
+                android:textSize="12sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:src="@drawable/ic_time"/>
+
+            <TextView
+                android:id="@+id/product_timestamp_list"
+                android:paddingTop="2dp"
+                android:padding="5dp"
+                android:text="Date posted"
+                android:textSize="12sp"
+                android:paddingBottom="2dp"
+                android:textStyle="italic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -47,11 +48,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private List<Product> productList;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private ProductRecyclerAdapter productRecyclerAdapter;
     private FirebaseFirestore db;
     private CollectionReference collectionReferenceProduct;
     private CollectionReference collectionReferenceUser;
     private FirebaseAuth firebaseAuth;
+
 
     private boolean isSignedIn() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -73,8 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
         productList = new ArrayList<>();
         recyclerView = findViewById(R.id.product_recycler_view);
+        recyclerView.setVisibility(View.INVISIBLE);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        progressBar = findViewById(R.id.progress_bar_list);
+        progressBar.setVisibility(View.VISIBLE);
 
         if (!isSignedIn()) {
             showSignInOptions();
@@ -116,10 +123,11 @@ public class MainActivity extends AppCompatActivity {
                                 Product product = products.toObject(Product.class);
                                 productList.add(product);
                             }
-
                             productRecyclerAdapter = new ProductRecyclerAdapter(MainActivity.this,
                                     productList);
                             recyclerView.setAdapter(productRecyclerAdapter);
+                            progressBar.setVisibility(View.INVISIBLE);
+                            recyclerView.setVisibility(View.VISIBLE);
                             productRecyclerAdapter.notifyDataSetChanged();
                         } else {
                             Log.d("Document returned: ", "empty");
