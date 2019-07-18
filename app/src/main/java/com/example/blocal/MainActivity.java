@@ -44,7 +44,7 @@ import util.ProductApi;
 
 public class MainActivity extends AppCompatActivity {
     private static final int FIREBASE_LOGIN_CODE = 5566; // any num you want
-
+    private static final String TAG = "MainActivity";
     private List<Product> productList;
     private RecyclerView recyclerView;
     private ProductRecyclerAdapter productRecyclerAdapter;
@@ -173,41 +173,33 @@ public class MainActivity extends AppCompatActivity {
         final String userEmail = user.getEmail();
 
         // Create a user Map so we can create a user in the user collection
-        Map<String, String> userObj = new HashMap<>();
+        final Map<String, String> userObj = new HashMap<>();
         userObj.put("userId", userId);
         userObj.put("userDisplayName", userDisplayName);
         userObj.put("userEmail", userEmail);
 
+        final DocumentReference userDf = collectionReferenceUser.document(userId);
 
-        // save the user to a collection
-        collectionReferenceUser.add(userObj)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        documentReference.get()
-                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        // save user to the global product API for future use
-                                        ProductApi productApi = ProductApi.getInstance();
-                                        productApi.setUserId(userId);
-                                        productApi.setUserEmail(userDisplayName);
-                                        productApi.setUserEmail(userEmail);
-                                    }
-                                });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "" + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+        // you cannot overwrite the user every single time. bad idea.
+        userDf.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(Objects.requireNonNull(task.getResult().exists())) {
+                    return;
+                } else {
+                    userDf.set(userObj).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            ProductApi productApi = ProductApi.getInstance();
+                            productApi.setUserId(userId);
+                            productApi.setUserEmail(userDisplayName);
+                            productApi.setUserEmail(userEmail);
+                        }
+                    });
+                }
+            }
+        });
     }
-
-
 
     // rewrite this method to use the udemy signout code
 //    private void displaySignOutButton() {
