@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -34,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import model.Product;
 import ui.ProductRecyclerAdapter;
@@ -82,11 +85,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayBottomNav() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setVisibility(View.VISIBLE);
         bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
             @Override
             public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
-                switch(menuItem.getItemId()) {
+                switch (menuItem.getItemId()) {
                     case R.id.action_add:
                         Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
                         break;
@@ -107,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if(!queryDocumentSnapshots.isEmpty()) {
-                            for(QueryDocumentSnapshot products : queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            for (QueryDocumentSnapshot products : queryDocumentSnapshots) {
                                 Product product = products.toObject(Product.class);
                                 productList.add(product);
                             }
@@ -155,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 displayBottomNav();
                 displayAllProducts();
             } else {
-                Toast.makeText(this, "" + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "" + response.getError().getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -166,11 +171,13 @@ public class MainActivity extends AppCompatActivity {
         final String userId = user.getUid();
         final String userDisplayName = user.getDisplayName();
         final String userEmail = user.getEmail();
+
         // Create a user Map so we can create a user in the user collection
         Map<String, String> userObj = new HashMap<>();
         userObj.put("userId", userId);
         userObj.put("userDisplayName", userDisplayName);
         userObj.put("userEmail", userEmail);
+
 
         // save the user to a collection
         collectionReferenceUser.add(userObj)
@@ -181,7 +188,8 @@ public class MainActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        ProductApi productApi = ProductApi.getInstance(); // global Api
+                                        // save user to the global product API for future use
+                                        ProductApi productApi = ProductApi.getInstance();
                                         productApi.setUserId(userId);
                                         productApi.setUserEmail(userDisplayName);
                                         productApi.setUserEmail(userEmail);
@@ -196,7 +204,10 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
+
+
 
     // rewrite this method to use the udemy signout code
 //    private void displaySignOutButton() {
