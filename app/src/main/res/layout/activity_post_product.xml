@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".PostProductActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,37 +13,38 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/product_image_post"
             android:layout_width="397dp"
             android:layout_height="240dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/custom_border"
-            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.4"
+            app:layout_constraintHorizontal_bias="0.571"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/take_photo_button"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_photo_camera_black_24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+            app:layout_constraintBottom_toBottomOf="@+id/product_image_post"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.492"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="@+id/product_image_post"
             app:layout_constraintVertical_bias="0.327" />
 
         <ImageButton
+            android:id="@+id/upload_photo_button"
             android:layout_width="340dp"
             android:layout_height="50dp"
             android:src="@drawable/ic_file_upload_black_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.492"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton" />
+            app:layout_constraintTop_toBottomOf="@+id/take_photo_button" />
 
         <EditText
             android:id="@+id/product_name_post"
@@ -59,7 +61,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+            app:layout_constraintTop_toBottomOf="@+id/product_image_post" />
+
+        <EditText
+            android:id="@+id/product_price_post"
+            android:layout_width="394dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/custom_border"
+            android:gravity="center_vertical"
+            android:inputType="numberDecimal"
+            android:hint="Enter price"
+            android:maxLines="1"
+            android:padding="15dp"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/product_location_post" />
 
         <Spinner
             android:id="@+id/category_spinner_post"
@@ -86,6 +107,7 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/custom_border"
             android:gravity="top"
+            android:inputType="textMultiLine"
             android:hint="Description"
             android:lineSpacingMultiplier="1.5"
             android:maxLines="4"
@@ -97,33 +119,41 @@
             app:layout_constraintTop_toBottomOf="@+id/category_spinner_post" />
 
         <EditText
-            android:id="@+id/product_street_address_post"
+            android:id="@+id/product_location_post"
             android:layout_width="395dp"
-            android:layout_height="44dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/custom_border"
+            android:gravity="top"
+            android:inputType="textPostalAddress"
             android:hint="Location"
             android:maxLines="1"
             android:padding="15dp"
-            android:textSize="15dp"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.562"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_description_post" />
 
-
-
-
-
-
-
-
-
-
+        <Button
+            android:id="@+id/post_product_button"
+            android:layout_width="395dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/custom_button_filling"
+            android:textSize="15sp"
+            android:text="Post"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/product_price_post"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 </ScrollView>
