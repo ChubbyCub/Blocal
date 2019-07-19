@@ -94,20 +94,21 @@ public class MainActivity extends AppCompatActivity {
     private void displayBottomNav() {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setVisibility(View.VISIBLE);
-        bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onNavigationItemReselected(@NonNull MenuItem menuItem) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.action_add:
                         Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
-                        break;
+                        return true;
                     case R.id.action_account:
                         Toast.makeText(getApplicationContext(), "Action Account clicked", Toast.LENGTH_SHORT).show();
-                        break;
+                        return true;
                     case R.id.action_home:
                         Toast.makeText(getApplicationContext(), "Action Home Clicked", Toast.LENGTH_SHORT).show();
-                        break;
+                        return true;
                 }
+                return false;
             }
         });
     }
