@@ -4,4 +4,5 @@
     <string name="fb_login_protocol_scheme" translatable="false">fb348504412508682</string>
     <string name="img_content">Product Image</string>
     <string name="product_main">product main</string>
+    <string name="select_category">Select a category</string>
 </resources>
