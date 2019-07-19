@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.action_add:
+                        startActivity(new Intent(getApplicationContext(), PostProductActivity.class));
                         Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.action_account:
