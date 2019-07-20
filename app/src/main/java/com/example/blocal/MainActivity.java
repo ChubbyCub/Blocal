@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -12,7 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
+// import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -43,17 +44,18 @@ import model.Product;
 import ui.ProductRecyclerAdapter;
 import util.ProductApi;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final int FIREBASE_LOGIN_CODE = 5566; // any num you want
     private static final String TAG = "MainActivity";
-    private List<Product> productList;
+
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
+    // private ProgressBar progressBar;
     private ProductRecyclerAdapter productRecyclerAdapter;
     private FirebaseFirestore db;
     private CollectionReference collectionReferenceProduct;
     private CollectionReference collectionReferenceUser;
     private FirebaseAuth firebaseAuth;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     private boolean isSignedIn() {
@@ -74,20 +76,24 @@ public class MainActivity extends AppCompatActivity {
         collectionReferenceProduct = db.collection("products");
         collectionReferenceUser = db.collection("users");
 
-        productList = new ArrayList<>();
         recyclerView = findViewById(R.id.product_recycler_view);
         recyclerView.setVisibility(View.INVISIBLE);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-        progressBar = findViewById(R.id.progress_bar_list);
-        progressBar.setVisibility(View.VISIBLE);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+//        progressBar = findViewById(R.id.progress_bar_list);
+//        progressBar.setVisibility(View.VISIBLE);
 
         if (!isSignedIn()) {
             showSignInOptions();
         } else {
             displayBottomNav();
             displayAllProducts();
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -115,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayAllProducts() {
+
+        final List<Product> productList = new ArrayList<>();
         collectionReferenceProduct
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -128,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                             productRecyclerAdapter = new ProductRecyclerAdapter(MainActivity.this,
                                     productList);
                             recyclerView.setAdapter(productRecyclerAdapter);
-                            progressBar.setVisibility(View.INVISIBLE);
+                            // progressBar.setVisibility(View.INVISIBLE);
                             recyclerView.setVisibility(View.VISIBLE);
                             productRecyclerAdapter.notifyDataSetChanged();
                         } else {
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 addNewUser(firebaseAuth);
                 displayBottomNav();
                 displayAllProducts();
+                swipeRefreshLayout.setRefreshing(false);
             } else {
                 Toast.makeText(this, "" + response.getError().getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -190,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
 
         final DocumentReference userDf = collectionReferenceUser.document(userId);
 
-        // you cannot overwrite the user every single time. bad idea.
         userDf.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -200,15 +208,18 @@ public class MainActivity extends AppCompatActivity {
                     userDf.set(userObj).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            ProductApi productApi = ProductApi.getInstance();
-                            productApi.setUserId(userId);
-                            productApi.setUserEmail(userDisplayName);
-                            productApi.setUserEmail(userEmail);
+                            Log.d("Success: ", "Added a new user");
                         }
                     });
                 }
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        displayAllProducts();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     // rewrite this method to use the udemy signout code

@@ -15,6 +15,10 @@ public class Product implements Parcelable {
     private Timestamp dateAdded;
     private String photoURL;
 
+
+
+    private String category;
+
     public Product() {
 
     }
@@ -84,6 +88,14 @@ public class Product implements Parcelable {
 
     public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
