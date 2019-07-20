@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 
 public class Product implements Parcelable {
@@ -14,9 +15,7 @@ public class Product implements Parcelable {
     private String userId;
     private Timestamp dateAdded;
     private String photoURL;
-
-
-
+    private GeoPoint coordinates;
     private String category;
 
     public Product() {
@@ -24,7 +23,7 @@ public class Product implements Parcelable {
     }
 
     public Product(String name, double price, String description, String location, String userId,
-                   Timestamp dateAdded, String photoURL) {
+                   Timestamp dateAdded, String photoURL, String category) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -32,6 +31,7 @@ public class Product implements Parcelable {
         this.userId = userId;
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
+        this.category = category;
     }
 
     public String getName() {
@@ -96,6 +96,14 @@ public class Product implements Parcelable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public GeoPoint getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(GeoPoint coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

@@ -3,12 +3,22 @@ package com.example.blocal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,6 +28,15 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,7 +48,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -42,14 +60,15 @@ import java.util.Objects;
 
 import model.Product;
 import ui.ProductRecyclerAdapter;
-import util.ProductApi;
+
+import static com.google.gson.internal.$Gson$Types.arrayOf;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final int FIREBASE_LOGIN_CODE = 5566; // any num you want
+    private static final int LOCATION_ACCESS_CODE = 777;
     private static final String TAG = "MainActivity";
 
     private RecyclerView recyclerView;
-    // private ProgressBar progressBar;
     private ProductRecyclerAdapter productRecyclerAdapter;
     private FirebaseFirestore db;
     private CollectionReference collectionReferenceProduct;
@@ -57,15 +76,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private FirebaseAuth firebaseAuth;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-
-    private boolean isSignedIn() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        return user != null;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("onCreate is called", "yes");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -85,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefreshLayout.setRefreshing(true);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-//        progressBar = findViewById(R.id.progress_bar_list);
-//        progressBar.setVisibility(View.VISIBLE);
+        checkPermission();
 
         if (!isSignedIn()) {
             showSignInOptions();
@@ -94,6 +105,42 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             displayBottomNav();
             displayAllProducts();
             swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private boolean isSignedIn() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return user != null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult ( requestCode, permissions, grantResults );
+        switch (requestCode) {
+            case LOCATION_ACCESS_CODE: {
+                if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "Permission has been denied by user");
+                } else {
+                    Log.i(TAG, "Permission has been granted by user");
+                    LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+                    Boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    Log.d("GPS enabled: ", String.valueOf(isGpsEnabled));
+
+                    checkPermission ();
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Log.i("loc: ", String.valueOf(location.getLatitude()));
+                    Log.i("loc: ", String.valueOf(location.getLongitude()));
+                }
+                return;
+            }
+        }
+    }
+
+    private void checkPermission() {
+        int permission = ContextCompat.checkSelfPermission ( this, Manifest.permission.ACCESS_FINE_LOCATION );
+        if(permission != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "Permission to access location denied");
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, LOCATION_ACCESS_CODE);
         }
     }
 
@@ -170,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FIREBASE_LOGIN_CODE) {
-            // TODO: create a user right here
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 addNewUser(firebaseAuth);
@@ -221,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         displayAllProducts();
         swipeRefreshLayout.setRefreshing(false);
     }
+
 
     // rewrite this method to use the udemy signout code
 //    private void displaySignOutButton() {
