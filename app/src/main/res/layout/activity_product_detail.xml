@@ -27,7 +27,6 @@
                 android:scaleType="centerCrop"
                 android:id="@+id/product_image_main"
                 android:contentDescription="@string/product_main"
-                android:src="@drawable/running_shoes"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 />

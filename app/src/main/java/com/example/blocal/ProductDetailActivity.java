@@ -25,6 +25,8 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
+
 import model.Product;
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -55,18 +57,17 @@ public class ProductDetailActivity extends AppCompatActivity {
         productName.setText(product.getName());
         productLocation.setText(product.getLocation());
         productDescription.setText(product.getDescription());
-        productPrice.setText("$" + Double.toString(product.getPrice()));
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        productPrice.setText("$" + df.format(product.getPrice()));
 
         setUserName(product.getUserId());
 
-        // TODO: find a way to refactor this piece of code to translate time
         String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
         productTimestamp.setText(timeAgo);
 
-
-        // TODO: find a way to refactor this piece of code to edit picture
         String photoURL = product.getPhotoURL();
-        Picasso.get().load(photoURL).placeholder(R.drawable.running_shoes).fit().centerCrop().into(productImage);
+        Picasso.get().load(photoURL).fit().centerCrop().into(productImage);
     }
 
     private void setUserName(String userId) {
