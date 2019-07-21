@@ -16,10 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blocal.ProductDetailActivity;
 import com.example.blocal.R;
+import com.google.firebase.firestore.GeoPoint;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import model.DistanceCalculator;
 import model.Product;
 
 public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecyclerAdapter.ViewHolder> {
@@ -43,6 +45,11 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         final Product product = productList.get(position);
+        GeoPoint loc = product.getCoordinates();
+        double lon = loc.getLongitude();
+        double lat = loc.getLatitude();
+
+
 
         holder.name.setText(product.getName());
         holder.location.setText(product.getLocation());

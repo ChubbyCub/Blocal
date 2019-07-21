@@ -11,8 +11,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -53,11 +55,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import model.DistanceCalculator;
 import model.Product;
 import ui.ProductRecyclerAdapter;
 
@@ -75,197 +80,233 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private CollectionReference collectionReferenceUser;
     private FirebaseAuth firebaseAuth;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        super.onCreate ( savedInstanceState );
+        setContentView ( R.layout.activity_main );
+        setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        db = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
 
-        collectionReferenceProduct = db.collection("products");
-        collectionReferenceUser = db.collection("users");
+        db = FirebaseFirestore.getInstance ();
+        firebaseAuth = FirebaseAuth.getInstance ();
 
-        recyclerView = findViewById(R.id.product_recycler_view);
-        recyclerView.setVisibility(View.INVISIBLE);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        collectionReferenceProduct = db.collection ( "products" );
+        collectionReferenceUser = db.collection ( "users" );
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        recyclerView = findViewById ( R.id.product_recycler_view );
+        recyclerView.setVisibility ( View.INVISIBLE );
+        recyclerView.setHasFixedSize ( true );
+        recyclerView.setLayoutManager ( new GridLayoutManager ( this, 2 ) );
 
-        checkPermission();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById ( R.id.swipe_container );
+        swipeRefreshLayout.setRefreshing ( true );
+        swipeRefreshLayout.setOnRefreshListener ( this );
 
-        if (!isSignedIn()) {
-            showSignInOptions();
+        requestLocationPermission ();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient ( this );
+
+        if (!isSignedIn ()) {
+            showSignInOptions ();
+
         } else {
-            displayBottomNav();
-            displayAllProducts();
-            swipeRefreshLayout.setRefreshing(false);
+            displayBottomNav ();
+            displayAllProducts ();
+            swipeRefreshLayout.setRefreshing ( false );
         }
     }
 
     private boolean isSignedIn() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance ().getCurrentUser ();
         return user != null;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult ( requestCode, permissions, grantResults );
-        switch (requestCode) {
-            case LOCATION_ACCESS_CODE: {
-                if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Permission has been denied by user");
-                } else {
-                    Log.i(TAG, "Permission has been granted by user");
-                    LocationManager locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-                    Boolean isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    Log.d("GPS enabled: ", String.valueOf(isGpsEnabled));
-
-                    checkPermission ();
-                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    Log.i("loc: ", String.valueOf(location.getLatitude()));
-                    Log.i("loc: ", String.valueOf(location.getLongitude()));
-                }
-                return;
-            }
-        }
-    }
-
-    private void checkPermission() {
+    private void requestLocationPermission() {
         int permission = ContextCompat.checkSelfPermission ( this, Manifest.permission.ACCESS_FINE_LOCATION );
-        if(permission != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "Permission to access location denied");
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, LOCATION_ACCESS_CODE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions ( this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_ACCESS_CODE );
         }
     }
 
     private void displayBottomNav() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setVisibility(View.VISIBLE);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById ( R.id.bottom_navigation );
+        bottomNavigationView.setVisibility ( View.VISIBLE );
+        bottomNavigationView.setOnNavigationItemSelectedListener ( new BottomNavigationView.OnNavigationItemSelectedListener () {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
+                switch (menuItem.getItemId ()) {
                     case R.id.action_add:
-                        startActivity(new Intent(getApplicationContext(), PostProductActivity.class));
-                        Toast.makeText(getApplicationContext(), "Action Add Clicked", Toast.LENGTH_SHORT).show();
+                        startActivity ( new Intent ( getApplicationContext (), PostProductActivity.class ) );
+                        Toast.makeText ( getApplicationContext (), "Action Add Clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                     case R.id.action_account:
-                        Toast.makeText(getApplicationContext(), "Action Account clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText ( getApplicationContext (), "Action Account clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                     case R.id.action_home:
-                        Toast.makeText(getApplicationContext(), "Action Home Clicked", Toast.LENGTH_SHORT).show();
+                        Toast.makeText ( getApplicationContext (), "Action Home Clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                 }
                 return false;
             }
-        });
+        } );
     }
 
     private void displayAllProducts() {
-
-        final List<Product> productList = new ArrayList<>();
+        final List<Product> productList = new ArrayList<> ();
         collectionReferenceProduct
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .get ()
+                .addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (!queryDocumentSnapshots.isEmpty()) {
+                        if (!queryDocumentSnapshots.isEmpty ()) {
                             for (QueryDocumentSnapshot products : queryDocumentSnapshots) {
-                                Product product = products.toObject(Product.class);
-                                productList.add(product);
+                                Product product = products.toObject ( Product.class );
+                                productList.add ( product );
                             }
-                            productRecyclerAdapter = new ProductRecyclerAdapter(MainActivity.this,
-                                    productList);
-                            recyclerView.setAdapter(productRecyclerAdapter);
-                            // progressBar.setVisibility(View.INVISIBLE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                            productRecyclerAdapter.notifyDataSetChanged();
+
+                            sortProductList ( productList );
                         } else {
-                            Log.d("Document returned: ", "empty");
+                            Log.d ( "Document returned: ", "empty" );
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+                } )
+                .addOnFailureListener ( new OnFailureListener () {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("ERROR: ", e.getMessage());
+                        Log.d ( "ERROR: ", e.getMessage () );
                     }
-                });
+                } );
+    }
+
+    // rename to something like getLocationAndSort
+    private void sortProductList(final List<Product> list) {
+        int permission = ContextCompat.checkSelfPermission ( this, Manifest.permission.ACCESS_FINE_LOCATION );
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            Log.i ( TAG, "Permission was not granted" );
+            return;
+        }
+
+        fusedLocationProviderClient.getLastLocation ().addOnCompleteListener ( this, new OnCompleteListener<Location> () {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                Log.d ( "task", "task complete" );
+                if (task.isSuccessful () && task.getResult () != null) {
+                    // put this in a separate function and call it sort.
+                    Log.d ( "task", "success" );
+                    Location location = task.getResult ();
+
+
+                    final double currLat = location.getLatitude ();
+                    final double currLon = location.getLongitude ();
+
+                    Collections.sort ( list, new Comparator<Product> () {
+                        @Override
+                        public int compare(Product product1, Product product2) {
+                            double lat1 = product1.getCoordinates ().getLatitude ();
+                            double lon1 = product1.getCoordinates ().getLongitude ();
+                            double lat2 = product2.getCoordinates ().getLatitude ();
+                            double lon2 = product2.getCoordinates ().getLongitude ();
+
+                            double distant1 = DistanceCalculator.calculateDistance ( lat1, lon1, currLat, currLon );
+                            double distant2 = DistanceCalculator.calculateDistance ( lat2, lon2, currLat, currLon );
+
+                            double diff = distant1 - distant2;
+
+                            if (diff == 0) {
+                                return 0;
+                            }
+
+                            if (diff < 0) {
+                                return -1;
+                            }
+
+                            return 1;
+                        }
+                    } );
+
+
+                }
+
+
+                productRecyclerAdapter = new ProductRecyclerAdapter ( MainActivity.this,
+                        list );
+                recyclerView.setAdapter ( productRecyclerAdapter );
+                recyclerView.setVisibility ( View.VISIBLE );
+                productRecyclerAdapter.notifyDataSetChanged ();
+
+            }
+        } );
     }
 
     private void showSignInOptions() {
-        startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder()
-                        .setAvailableProviders(Arrays.asList(
-                                new AuthUI.IdpConfig.EmailBuilder().build(),
-                                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                                new AuthUI.IdpConfig.GoogleBuilder().build()
-                        ))
-                        .setLogo(R.drawable.bart)
-                        .setTheme(R.style.MyTheme)
-                        .build(), FIREBASE_LOGIN_CODE
+        startActivityForResult (
+                AuthUI.getInstance ().createSignInIntentBuilder ()
+                        .setAvailableProviders ( Arrays.asList (
+                                new AuthUI.IdpConfig.EmailBuilder ().build (),
+                                new AuthUI.IdpConfig.FacebookBuilder ().build (),
+                                new AuthUI.IdpConfig.GoogleBuilder ().build ()
+                        ) )
+                        .setLogo ( R.drawable.bart )
+                        .setTheme ( R.style.MyTheme )
+                        .build (), FIREBASE_LOGIN_CODE
         );
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult ( requestCode, resultCode, data );
         if (requestCode == FIREBASE_LOGIN_CODE) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
+            IdpResponse response = IdpResponse.fromResultIntent ( data );
             if (resultCode == RESULT_OK) {
-                addNewUser(firebaseAuth);
-                displayBottomNav();
-                displayAllProducts();
-                swipeRefreshLayout.setRefreshing(false);
+                addNewUser ( firebaseAuth );
+                displayBottomNav ();
+                displayAllProducts ();
+                swipeRefreshLayout.setRefreshing ( false );
             } else {
-                Toast.makeText(this, "" + response.getError().getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText ( this, "" + response.getError ().getMessage (),
+                        Toast.LENGTH_SHORT ).show ();
             }
         }
     }
 
     private void addNewUser(@NonNull FirebaseAuth firebaseAuth) {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser ();
 
-        final String userId = user.getUid();
-        final String userDisplayName = user.getDisplayName();
-        final String userEmail = user.getEmail();
+        final String userId = user.getUid ();
+        final String userDisplayName = user.getDisplayName ();
+        final String userEmail = user.getEmail ();
 
         // Create a user Map so we can create a user in the user collection
-        final Map<String, String> userObj = new HashMap<>();
-        userObj.put("userId", userId);
-        userObj.put("userDisplayName", userDisplayName);
-        userObj.put("userEmail", userEmail);
+        final Map<String, String> userObj = new HashMap<> ();
+        userObj.put ( "userId", userId );
+        userObj.put ( "userDisplayName", userDisplayName );
+        userObj.put ( "userEmail", userEmail );
 
-        final DocumentReference userDf = collectionReferenceUser.document(userId);
+        final DocumentReference userDf = collectionReferenceUser.document ( userId );
 
-        userDf.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        userDf.get ().addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(Objects.requireNonNull(task.getResult().exists())) {
+                if (Objects.requireNonNull ( task.getResult ().exists () )) {
                     return;
                 } else {
-                    userDf.set(userObj).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    userDf.set ( userObj ).addOnSuccessListener ( new OnSuccessListener<Void> () {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Log.d("Success: ", "Added a new user");
+                            Log.d ( "Success: ", "Added a new user" );
                         }
-                    });
+                    } );
                 }
             }
-        });
+        } );
     }
 
     @Override
     public void onRefresh() {
-        displayAllProducts();
-        swipeRefreshLayout.setRefreshing(false);
+        displayAllProducts ();
+        swipeRefreshLayout.setRefreshing ( false );
     }
 
 
