@@ -45,11 +45,6 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         final Product product = productList.get(position);
-        GeoPoint loc = product.getCoordinates();
-        double lon = loc.getLongitude();
-        double lat = loc.getLatitude();
-
-
 
         holder.name.setText(product.getName());
         holder.location.setText(product.getLocation());
@@ -81,7 +76,6 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name, location, dateAdded;
-        public ProgressBar progressBar;
         public ImageView image;
 
         public ViewHolder(@NonNull View itemView, Context ctx) {

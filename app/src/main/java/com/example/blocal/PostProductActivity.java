@@ -20,10 +20,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,13 +41,14 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import model.Product;
 import util.ProductApi;
 
-public class PostProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class PostProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, PlaceSelectionListener {
     private static final int GALLERY_CODE = 1;
 
     private ImageButton takePhotoButton;
@@ -51,7 +56,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     private EditText productNameText;
     private Spinner productCategorySpinner;
     private EditText productDescriptionText;
-    private EditText productLocationText;
+    private AutocompleteSupportFragment autocompleteSupportFragment;
     private EditText productPriceText;
     private Button postProductButton;
     private Uri productImageUri;
@@ -77,7 +82,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         productNameText = findViewById(R.id.product_name_post);
         productCategorySpinner = findViewById(R.id.category_spinner_post);
         productDescriptionText = findViewById(R.id.product_description_post);
-        productLocationText = findViewById(R.id.product_location_post);
+        autocompleteSupportFragment = (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById (R.id.autocomplete_fragment);
         productPriceText = findViewById(R.id.product_price_post);
         postProductButton = findViewById(R.id.post_product_button);
         productImageView = findViewById(R.id.product_image_post);
@@ -92,6 +97,10 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         uploadPhotoButton.setOnClickListener(this);
         postProductButton.setOnClickListener(this);
         productCategorySpinner.setOnItemSelectedListener(this);
+
+        // initialize the autocomplete
+        autocompleteSupportFragment.setPlaceFields (Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(this);
 
     }
 
@@ -121,13 +130,13 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         final String name = productNameText.getText().toString().trim();
         final String description = productDescriptionText.getText().toString().trim();
         final String category = chosenCategory;
-        final String location = productLocationText.getText().toString().trim();
+
+        // final String location = productLocationText.getText().toString().trim();
         final Double price = Double.parseDouble(productPriceText.getText().toString().trim());
         final CollectionReference collectionReference = db.collection("products");
 
         if(!TextUtils.isEmpty(name) && !TextUtils.isEmpty(description)
-        && !TextUtils.isEmpty(category) && !TextUtils.isEmpty(location)
-                && price != null && productImageUri != null) {
+        && !TextUtils.isEmpty(category) && price != null && productImageUri != null) {
             final StorageReference filepath = storageReference
                     .child("Test")
                     .child("product_image" + Timestamp.now().getSeconds());
@@ -142,7 +151,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                                     Product product = new Product();
                                     product.setName(name);
                                     product.setDescription(description);
-                                    product.setLocation(location);
+                                    // product.setLocation(location);
                                     product.setPrice(price);
                                     product.setPhotoURL(uri.toString());
                                     product.setDateAdded(new Timestamp(new Date()));
@@ -212,5 +221,15 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         super.onStart();
         user = fireBaseAuth.getCurrentUser();
         currentUserId = user.getUid();
+    }
+
+    @Override
+    public void onPlaceSelected(@NonNull Place place) {
+        Log.i("PostProductActivity", "Place: " + place.getName() + ", " + place.getId());
+    }
+
+    @Override
+    public void onError(@NonNull Status status) {
+        Log.i("PostProductActivity", "An error occurred: " + status);
     }
 }

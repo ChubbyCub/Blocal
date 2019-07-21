@@ -43,6 +43,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private static final int FIREBASE_LOGIN_CODE = 5566; // any num you want
     private static final int LOCATION_ACCESS_CODE = 777;
     private static final String TAG = "MainActivity";
+    private static boolean isPlacesInitialized = false;
 
     private RecyclerView recyclerView;
     private ProductRecyclerAdapter productRecyclerAdapter;
@@ -103,6 +106,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById ( R.id.swipe_container );
         swipeRefreshLayout.setRefreshing ( true );
         swipeRefreshLayout.setOnRefreshListener ( this );
+
+
+        // TODO: hide the API key here somewhere
+        if(!isPlacesInitialized) {
+            // Initialize the SDK
+            Places.initialize(getApplicationContext(), "");
+            isPlacesInitialized = true;
+        }
 
         requestLocationPermission ();
 
