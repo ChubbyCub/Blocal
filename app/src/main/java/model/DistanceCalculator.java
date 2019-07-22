@@ -2,8 +2,9 @@ package model;
 
 public class DistanceCalculator {
     private static final int R = 6371;
+    private static final double MILES_KM_RATIOS = 1.6;
 
-    public static double calculateDistance(Double lat1, Double lon1, Double lat2, Double lon2) {
+    public static double calculateDistanceMiles(Double lat1, Double lon1, Double lat2, Double lon2) {
 
         double dLat = deg2rad ( lat2 - lat1 );
         double dLon = deg2rad ( lon2 - lon1 );
@@ -12,7 +13,7 @@ public class DistanceCalculator {
                         Math.sin ( dLon / 2 ) * Math.sin ( dLon / 2 );
 
         double c = 2 * Math.atan2 ( Math.sqrt ( a ), Math.sqrt ( 1 - a ) );
-        return R * c;
+        return R * c / MILES_KM_RATIOS;
     }
 
     private static double deg2rad(Double deg) {

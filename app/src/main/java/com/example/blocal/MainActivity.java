@@ -107,11 +107,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefreshLayout.setRefreshing ( true );
         swipeRefreshLayout.setOnRefreshListener ( this );
 
-
-        // TODO: hide the API key here somewhere
-        if(!isPlacesInitialized) {
+        if (!isPlacesInitialized) {
             // Initialize the SDK
-            Places.initialize(getApplicationContext(), "");
+            Places.initialize ( getApplicationContext (), getString(R.string.google_api_key));
             isPlacesInitialized = true;
         }
 
@@ -121,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         if (!isSignedIn ()) {
             showSignInOptions ();
-
         } else {
             displayBottomNav ();
             displayAllProducts ();
@@ -150,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 switch (menuItem.getItemId ()) {
                     case R.id.action_add:
                         startActivity ( new Intent ( getApplicationContext (), PostProductActivity.class ) );
-                        Toast.makeText ( getApplicationContext (), "Action Add Clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                     case R.id.action_account:
                         Toast.makeText ( getApplicationContext (), "Action Account clicked", Toast.LENGTH_SHORT ).show ();
@@ -177,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                                 productList.add ( product );
                             }
 
-                            sortProductList ( productList );
+                            getLocationAndSort ( productList );
                         } else {
                             Log.d ( "Document returned: ", "empty" );
                         }
@@ -191,8 +187,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 } );
     }
 
-    // rename to something like getLocationAndSort
-    private void sortProductList(final List<Product> list) {
+    private void getLocationAndSort(final List<Product> list) {
+        SharedPreferences sharedPref = this.getSharedPreferences ( getString ( R.string.preference_file_key ), Context.MODE_PRIVATE );
+        sharedPref.edit ().remove ( "curr_lat" ).apply ();
+        sharedPref.edit ().remove ( "curr_lon" ).apply ();
+
         int permission = ContextCompat.checkSelfPermission ( this, Manifest.permission.ACCESS_FINE_LOCATION );
         if (permission != PackageManager.PERMISSION_GRANTED) {
             Log.i ( TAG, "Permission was not granted" );
@@ -208,9 +207,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     Log.d ( "task", "success" );
                     Location location = task.getResult ();
 
-
                     final double currLat = location.getLatitude ();
                     final double currLon = location.getLongitude ();
+
+                    SharedPreferences sharedPref = getSharedPreferences ( getString ( R.string.preference_file_key ), Context.MODE_PRIVATE );
+                    SharedPreferences.Editor editor = sharedPref.edit ();
+                    editor.putLong ( "curr_lat", Double.doubleToRawLongBits ( currLat ) );
+                    editor.putLong ( "curr_lon", Double.doubleToRawLongBits ( currLon ) );
+                    editor.commit ();
 
                     Collections.sort ( list, new Comparator<Product> () {
                         @Override
@@ -220,8 +224,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             double lat2 = product2.getCoordinates ().getLatitude ();
                             double lon2 = product2.getCoordinates ().getLongitude ();
 
-                            double distant1 = DistanceCalculator.calculateDistance ( lat1, lon1, currLat, currLon );
-                            double distant2 = DistanceCalculator.calculateDistance ( lat2, lon2, currLat, currLon );
+                            double distant1 = DistanceCalculator.calculateDistanceMiles ( lat1, lon1, currLat, currLon );
+                            double distant2 = DistanceCalculator.calculateDistanceMiles ( lat2, lon2, currLat, currLon );
 
                             double diff = distant1 - distant2;
 
@@ -236,13 +240,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             return 1;
                         }
                     } );
-
-
                 }
-
-
-                productRecyclerAdapter = new ProductRecyclerAdapter ( MainActivity.this,
-                        list );
+                productRecyclerAdapter = new ProductRecyclerAdapter ( MainActivity.this, list );
                 recyclerView.setAdapter ( productRecyclerAdapter );
                 recyclerView.setVisibility ( View.VISIBLE );
                 productRecyclerAdapter.notifyDataSetChanged ();

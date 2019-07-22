@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -63,24 +62,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_image_post" />
 
-        <EditText
-            android:id="@+id/product_price_post"
-            android:layout_width="394dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/custom_border"
-            android:gravity="center_vertical"
-            android:inputType="numberDecimal"
-            android:hint="Enter price"
-            android:maxLines="1"
-            android:padding="15dp"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/product_location_post" />
 
         <Spinner
             android:id="@+id/category_spinner_post"
@@ -98,16 +79,36 @@
 
         </Spinner>
 
+
+        <EditText
+            android:id="@+id/product_price_post"
+            android:layout_width="394dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/custom_border"
+            android:gravity="center_vertical"
+            android:hint="Enter price"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:padding="15dp"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/category_spinner_post" />
+
         <EditText
             android:id="@+id/product_description_post"
             android:layout_width="394dp"
             android:layout_height="134dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/custom_border"
             android:gravity="top"
-            android:inputType="textMultiLine"
             android:hint="Description"
+            android:inputType="textMultiLine"
             android:lineSpacingMultiplier="1.5"
             android:maxLines="4"
             android:padding="15dp"
@@ -115,57 +116,44 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.111"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/category_spinner_post" />
-        <!--
-        <EditText
-            android:id="@+id/product_location_post"
-            android:layout_width="395dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/custom_border"
-            android:gravity="top"
-            android:inputType="textPostalAddress"
-            android:hint="Location"
-            android:maxLines="1"
-            android:padding="15dp"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.562"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/product_description_post" />
-            -->
+            app:layout_constraintTop_toBottomOf="@+id/product_price_post" />
 
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        <LinearLayout
+            android:id="@+id/autocomplete_wrapper"
             android:layout_width="395dp"
             android:layout_height="49dp"
             android:layout_marginTop="16dp"
-            android:padding="15dp"
-            android:textSize="15sp"
+            android:gravity="top"
+            android:background="@drawable/custom_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/product_description_post"
+            app:layout_constraintTop_toBottomOf="@id/product_description_post">
+            <fragment
+                android:id="@+id/autocomplete_fragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="12sp" />
 
-            />
+        </LinearLayout>
 
         <Button
             android:id="@+id/post_product_button"
-            android:layout_width="395dp"
-            android:layout_height="43dp"
+            android:layout_width="394dp"
+            android:layout_height="49dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/custom_button_filling"
-            android:textSize="15sp"
             android:text="Post"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment"
+            app:layout_constraintTop_toBottomOf="@+id/autocomplete_wrapper"
             app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

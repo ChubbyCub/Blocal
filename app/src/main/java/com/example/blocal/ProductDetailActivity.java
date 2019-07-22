@@ -39,61 +39,60 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_product_detail);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        super.onCreate ( savedInstanceState );
+        setContentView ( R.layout.activity_product_detail );
+        setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        Product product = getIntent().getParcelableExtra("product");
-        Log.i("Name of the product card: ", product.getName());
+        Product product = getIntent ().getParcelableExtra ( "product" );
+        Log.i ( "Name of the product card: ", product.getName () );
 
-        productName = (TextView) findViewById(R.id.product_name_main);
-        productLocation = (TextView) findViewById(R.id.product_location_main);
-        productTimestamp = (TextView) findViewById(R.id.product_timestamp_main);
-        productImage = (ImageView) findViewById(R.id.product_image_main);
-        productDescription = findViewById(R.id.product_description_main);
-        productPrice = findViewById(R.id.product_price_main);
+        productName = (TextView) findViewById ( R.id.product_name_main );
+        productLocation = (TextView) findViewById ( R.id.product_location_main );
+        productTimestamp = (TextView) findViewById ( R.id.product_timestamp_main );
+        productImage = (ImageView) findViewById ( R.id.product_image_main );
+        productDescription = findViewById ( R.id.product_description_main );
+        productPrice = findViewById ( R.id.product_price_main );
 
+        productName.setText ( product.getName () );
+        productLocation.setText ( product.getLocation () );
+        productDescription.setText ( product.getDescription () );
 
-        productName.setText(product.getName());
-        productLocation.setText(product.getLocation());
-        productDescription.setText(product.getDescription());
+        DecimalFormat df = new DecimalFormat ( "#.##" );
+        productPrice.setText ( "$" + df.format ( product.getPrice () ) );
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        productPrice.setText("$" + df.format(product.getPrice()));
+        setUserName ( product.getUserId () );
 
-        setUserName(product.getUserId());
+        String timeAgo = (String) DateUtils.getRelativeTimeSpanString ( product.getDateAdded ().getSeconds () * 1000 );
+        productTimestamp.setText ( timeAgo );
 
-        String timeAgo = (String) DateUtils.getRelativeTimeSpanString(product.getDateAdded().getSeconds() * 1000);
-        productTimestamp.setText(timeAgo);
-
-        String photoURL = product.getPhotoURL();
-        Picasso.get().load(photoURL).fit().centerCrop().into(productImage);
+        String photoURL = product.getPhotoURL ();
+        Picasso.get ().load ( photoURL ).fit ().centerCrop ().into ( productImage );
     }
 
     private void setUserName(String userId) {
-        Log.d("does this function get called?", "Yes");
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference users = db.collection("users");
-        Query query = users.whereEqualTo("userId", userId);
+        Log.d ( "does this function get called?", "Yes" );
+        FirebaseFirestore db = FirebaseFirestore.getInstance ();
+        CollectionReference users = db.collection ( "users" );
+        Query query = users.whereEqualTo ( "userId", userId );
 
-        query.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        query.get ()
+                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
-                                String userName = document.get("userDisplayName").toString();
-                                TextView sellerName = findViewById(R.id.seller_name_main);
-                                sellerName.setText(userName);
+                        if (task.isSuccessful ()) {
+                            for (QueryDocumentSnapshot document : task.getResult ()) {
+                                String userName = document.get ( "userDisplayName" ).toString ();
+                                TextView sellerName = findViewById ( R.id.seller_name_main );
+                                sellerName.setText ( userName );
                             }
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
+                } )
+                .addOnFailureListener ( new OnFailureListener () {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("ERROR: ", e.getMessage());
+                        Log.d ( "ERROR: ", e.getMessage () );
                     }
-                });
+                } );
     }
 }

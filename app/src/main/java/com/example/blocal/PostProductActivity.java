@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,6 +26,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AddressComponent;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -33,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -70,6 +74,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     private List<String> categories;
     private String chosenCategory;
     private String currentUserId;
+    private GeoPoint geoPoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +104,9 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         productCategorySpinner.setOnItemSelectedListener(this);
 
         // initialize the autocomplete
-        autocompleteSupportFragment.setPlaceFields (Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteSupportFragment.setPlaceFields (Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME));
+        autocompleteSupportFragment.setHint ( "Enter your item address" );
+        ((EditText)findViewById ( R.id.places_autocomplete_search_input )).setTextSize(15);
         autocompleteSupportFragment.setOnPlaceSelectedListener(this);
 
     }
@@ -131,7 +138,6 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         final String description = productDescriptionText.getText().toString().trim();
         final String category = chosenCategory;
 
-        // final String location = productLocationText.getText().toString().trim();
         final Double price = Double.parseDouble(productPriceText.getText().toString().trim());
         final CollectionReference collectionReference = db.collection("products");
 
@@ -151,7 +157,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                                     Product product = new Product();
                                     product.setName(name);
                                     product.setDescription(description);
-                                    // product.setLocation(location);
+                                    product.setCoordinates (geoPoint);
                                     product.setPrice(price);
                                     product.setPhotoURL(uri.toString());
                                     product.setDateAdded(new Timestamp(new Date()));
@@ -170,6 +176,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                     });
         }
     }
+
 
 
     @Override
@@ -225,11 +232,14 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onPlaceSelected(@NonNull Place place) {
-        Log.i("PostProductActivity", "Place: " + place.getName() + ", " + place.getId());
+        Double latitude = place.getLatLng ().latitude;
+        Double longitude = place.getLatLng ().longitude;
+
+        geoPoint = new GeoPoint ( latitude, longitude );
     }
 
     @Override
     public void onError(@NonNull Status status) {
-        Log.i("PostProductActivity", "An error occurred: " + status);
+        Log.e("PostProductActivity", "An error occurred: " + status);
     }
 }
