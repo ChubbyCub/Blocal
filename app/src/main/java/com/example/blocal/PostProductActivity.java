@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import model.Product;
 
@@ -218,7 +219,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat ("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat ("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir( Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
