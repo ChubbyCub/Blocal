@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         if (!isPlacesInitialized) {
             // Initialize the SDK
-            Places.initialize ( getApplicationContext (), getString(R.string.google_api_key));
+            Places.initialize ( getApplicationContext (), "");
             isPlacesInitialized = true;
         }
 
