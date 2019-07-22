@@ -3,12 +3,14 @@ package com.example.blocal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,8 +28,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AddressComponent;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -44,16 +44,19 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import model.Product;
-import util.ProductApi;
 
 public class PostProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, PlaceSelectionListener {
     private static final int GALLERY_CODE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
 
     private ImageButton takePhotoButton;
     private ImageButton uploadPhotoButton;
@@ -75,6 +78,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     private String chosenCategory;
     private String currentUserId;
     private GeoPoint geoPoint;
+    String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +187,21 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.take_photo_button:
-                // saveJournal();
+                Intent takePictureIntent = new Intent( MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile ();
+
+                    } catch (IOException ex) {
+                        Log.e("ERROR: ", "Error occurred while creating the file");
+                    }
+                    if(photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile ( this, "com.example.blocal", photoFile );
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    }
+                }
                 break;
             case R.id.upload_photo_button:
                 Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -198,12 +216,40 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat ("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir( Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+
+        return image;
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == GALLERY_CODE && resultCode == RESULT_OK) {
             if(data != null) {
                 productImageUri = data.getData();
+                Picasso.get().load(productImageUri).fit().centerCrop().into(productImageView);
+                productImageView.setBackgroundColor(0x00000000);
+                takePhotoButton.setVisibility(View.INVISIBLE);
+                uploadPhotoButton.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if(data != null) {
+                productImageUri = Uri.fromFile(new File(currentPhotoPath));
                 Picasso.get().load(productImageUri).fit().centerCrop().into(productImageView);
                 productImageView.setBackgroundColor(0x00000000);
                 takePhotoButton.setVisibility(View.INVISIBLE);
