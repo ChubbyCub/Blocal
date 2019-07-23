@@ -10,7 +10,6 @@
     
     <TabHost
         android:id="@+id/tabHost"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -63,26 +62,12 @@
 
                 </LinearLayout>
 
-                <!-- tab3 -->
-                <LinearLayout
-                    android:id="@+id/tab3"
-                    android:background="@color/tab2Color"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:text="This is tab 3"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
             </FrameLayout>
 
         </LinearLayout>
 
     </TabHost>
+
+
 
 </LinearLayout>
