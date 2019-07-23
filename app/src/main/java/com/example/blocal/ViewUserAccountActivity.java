@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -57,7 +58,7 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
         Picasso.get ().load ( userProfileUri ).placeholder ( R.drawable.ic_profile_placeholder ).fit ().centerCrop ().into ( userAvatar );
 
-        editProfile.setOnClickListener ( this );
+        manageTransaction.setOnClickListener ( this );
         editProfile.setOnClickListener ( this );
         signOutButton.setOnClickListener ( this );
     }
@@ -69,7 +70,7 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
-                // get all the existing listings here
+                Toast.makeText (this, "manage transaction button clicked", Toast.LENGTH_SHORT).show();
                 Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
                 query.get ()
                         .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
@@ -81,8 +82,10 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                                         String productId = document.getId ();
                                         productIds.add ( productId );
                                     }
-                                    Intent intent = new Intent;
+                                    Intent intent = new Intent(getApplicationContext (), ManageTransactionActivity.class);
+                                    Log.d("Is there anything in the array? ", productIds.toString ());
                                     intent.putStringArrayListExtra ("productIds", productIds);
+                                    startActivity(intent);
                                 } else {
                                     Log.e ( TAG, task.getException ().getMessage () );
                                 }
@@ -97,6 +100,8 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                 break;
         }
     }
+
+
 
     @Override
     protected void onStart() {
