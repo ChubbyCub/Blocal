@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/user_avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
@@ -19,36 +19,39 @@
         tools:srcCompat="@tools:sample/avatars[13]" />
 
     <Button
-        android:id="@+id/current_listing_btn"
+        android:id="@+id/manage_transaction_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:gravity="start|center_vertical"
-        android:text="Current listings"
+        android:text="Manage your transactions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/user_avatar" />
 
     <Button
-        android:id="@+id/current_offers_btn"
+        android:id="@+id/edit_profile_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:gravity="start|center_vertical"
-        android:text="Current offers"
+        android:text="Edit your profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_listing_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/manage_transaction_btn" />
 
     <Button
         android:id="@+id/sign_out_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
         android:text="Sign Out"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/current_offers_btn" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
