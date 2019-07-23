@@ -1,12 +1,18 @@
 package com.example.blocal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TabHost;
+import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -31,6 +37,8 @@ public class ManageTransactionActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById ( R.id.tabs );
         tabLayout.setupWithViewPager ( mViewPager );
+
+        displayBottomNav ();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -39,5 +47,29 @@ public class ManageTransactionActivity extends AppCompatActivity {
         adapter.addFragment ( new BuyTransaction (), "Buy" );
 
         viewPager.setAdapter ( adapter );
+    }
+
+    private void displayBottomNav() {
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById ( R.id.bottom_navigation );
+        bottomNavigationView.setVisibility ( View.VISIBLE );
+        bottomNavigationView.setOnNavigationItemSelectedListener ( new BottomNavigationView.OnNavigationItemSelectedListener () {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId ()) {
+                    case R.id.action_add:
+                        startActivity ( new Intent ( getApplicationContext (), PostProductActivity.class ) );
+                        return true;
+                    case R.id.action_account:
+                        startActivity(new Intent (getApplicationContext (), ViewUserAccountActivity.class));
+                        Toast.makeText ( getApplicationContext (), "Action Account clicked", Toast.LENGTH_SHORT ).show ();
+                        return true;
+                    case R.id.action_home:
+                        startActivity(new Intent (getApplicationContext (), MainActivity.class));
+                        Toast.makeText ( getApplicationContext (), "Action Home Clicked", Toast.LENGTH_SHORT ).show ();
+                        return true;
+                }
+                return false;
+            }
+        } );
     }
 }
