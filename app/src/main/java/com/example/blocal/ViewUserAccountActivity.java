@@ -2,6 +2,7 @@ package com.example.blocal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,12 +55,15 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
             case R.id.edit_profile_btn:
                 break;
             case R.id.sign_out_btn:
+                firebaseAuth.signOut();
+                startActivity(new Intent (this, SignInActivity.class));
                 break;
         }
     }
 
     @Override
     protected void onStart() {
+
         super.onStart ();
         firebaseAuth = FirebaseAuth.getInstance ();
         user = firebaseAuth.getCurrentUser ();
