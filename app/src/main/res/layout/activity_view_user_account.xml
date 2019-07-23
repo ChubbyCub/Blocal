@@ -7,12 +7,11 @@
     tools:context=".ViewUserAccountActivity">
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_avatar"
-        android:layout_width="165dp"
-        android:layout_height="165dp"
+        android:layout_width="141dp"
+        android:layout_height="148dp"
         android:layout_marginTop="44dp"
-        android:src="@drawable/ic_profile_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

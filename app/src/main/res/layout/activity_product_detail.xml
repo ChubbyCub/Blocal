@@ -175,9 +175,9 @@
                             android:paddingStart="10dp"
                             android:paddingEnd="8dp"
                             style="?android:attr/ratingBarStyleSmall"
-                            android:numStars="5"
-                            android:stepSize="1"
-                            android:rating="3"/>
+                            android:numStars="6"
+                            android:stepSize="1.5"
+                            android:rating="5"/>
 
                     </LinearLayout>
                 </LinearLayout>

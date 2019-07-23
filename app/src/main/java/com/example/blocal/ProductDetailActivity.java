@@ -44,7 +44,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
         Product product = getIntent ().getParcelableExtra ( "product" );
-        Log.i ( "Name of the product card: ", product.getName () );
 
         productName = (TextView) findViewById ( R.id.product_name_main );
         productLocation = (TextView) findViewById ( R.id.product_location_main );
@@ -70,7 +69,6 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void setUserName(String userId) {
-        Log.d ( "does this function get called?", "Yes" );
         FirebaseFirestore db = FirebaseFirestore.getInstance ();
         CollectionReference users = db.collection ( "users" );
         Query query = users.whereEqualTo ( "userId", userId );
