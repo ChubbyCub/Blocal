@@ -1,15 +1,21 @@
 package com.example.blocal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TabHost;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 
-public class ManageTransactionActivity extends AppCompatActivity implements TabHost.OnTabChangeListener {
-    TabHost tabHost;
+import ui.SectionPageAdapter;
+
+public class ManageTransactionActivity extends AppCompatActivity {
+    private SectionPageAdapter mSectionPageAdapter;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,29 +25,19 @@ public class ManageTransactionActivity extends AppCompatActivity implements TabH
         ArrayList<String> productIds = stringArrayList.getStringArrayList( "productIds" );
         Log.d("anything in here? ", productIds.toString ());
 
-        tabHost = (TabHost) findViewById ( R.id.tabHost );
-        tabHost.setup();
+        mSectionPageAdapter = new SectionPageAdapter ( getSupportFragmentManager () );
+        mViewPager = (ViewPager) findViewById ( R.id.container );
+        setupViewPager ( mViewPager );
 
-        TabHost.TabSpec spec = tabHost.newTabSpec ( "Sell" );
-        spec.setContent ( R.id.tab1 );
-        spec.setIndicator("Sell");
-        tabHost.addTab(spec);
-
-        spec = tabHost.newTabSpec ( "Buy" );
-        spec.setContent ( R.id.tab2 );
-        spec.setIndicator("Buy");
-        tabHost.addTab(spec);
-
-        tabHost.setOnTabChangedListener ( this );
+        TabLayout tabLayout = (TabLayout) findViewById ( R.id.tabs );
+        tabLayout.setupWithViewPager ( mViewPager );
     }
 
-    @Override
-    public void onTabChanged(String s) {
-        switch(s) {
-            case "Sell":
-                break;
-            case "Buy":
-                break;
-        }
+    private void setupViewPager(ViewPager viewPager) {
+        SectionPageAdapter adapter = new SectionPageAdapter ( getSupportFragmentManager () );
+        adapter.addFragment ( new SellTransaction (), "Sell" );
+        adapter.addFragment ( new BuyTransaction (), "Buy" );
+
+        viewPager.setAdapter ( adapter );
     }
 }
