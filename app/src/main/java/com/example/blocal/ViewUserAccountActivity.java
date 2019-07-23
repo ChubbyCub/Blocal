@@ -83,7 +83,6 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                                         productIds.add ( productId );
                                     }
                                     Intent intent = new Intent(getApplicationContext (), ManageTransactionActivity.class);
-                                    Log.d("Is there anything in the array? ", productIds.toString ());
                                     intent.putStringArrayListExtra ("productIds", productIds);
                                     startActivity(intent);
                                 } else {

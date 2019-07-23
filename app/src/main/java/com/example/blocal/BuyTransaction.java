@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class BuyTransaction extends Fragment {
-    private static final String TAG = "SellTransaction";
+    private static final String TAG = "BuyTransaction";
     
     @Nullable
     @Override

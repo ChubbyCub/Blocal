@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,27 +14,41 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 import ui.SectionPageAdapter;
 
 public class ManageTransactionActivity extends AppCompatActivity {
+    private static final String TAG = "ManageTransactionActivity";
+
     private SectionPageAdapter mSectionPageAdapter;
     private SellTransaction sellTransactionFragment;
     private BuyTransaction buyTransactionFragment;
     private ViewPager mViewPager;
     private ArrayList<String> productIds;
 
+    private FirebaseFirestore db;
+    private CollectionReference products;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_manage_transaction );
-        final Bundle stringArrayList = getIntent().getExtras ();
-        productIds = stringArrayList.getStringArrayList( "productIds" );
-        Log.d("anything in here? ", productIds.toString ());
+        setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+
+        final Bundle stringArrayList = getIntent ().getExtras ();
+        productIds = stringArrayList.getStringArrayList ( "productIds" );
+
+        db = FirebaseFirestore.getInstance ();
+        products = db.collection ( "products" );
 
         sellTransactionFragment = new SellTransaction ();
         buyTransactionFragment = new BuyTransaction ();
@@ -58,9 +73,9 @@ public class ManageTransactionActivity extends AppCompatActivity {
     }
 
     private void sendDataToFragment() {
-        Bundle mbundle = new Bundle();
-        mbundle.putStringArrayList ( "productIds", productIds );
-        sellTransactionFragment.setArguments ( mbundle );
+        Bundle mBundle = new Bundle();
+        mBundle.putStringArrayList ( "productIds",productIds );
+        sellTransactionFragment.setArguments ( mBundle );
     }
 
 
@@ -75,11 +90,9 @@ public class ManageTransactionActivity extends AppCompatActivity {
                         startActivity ( new Intent ( getApplicationContext (), PostProductActivity.class ) );
                         return true;
                     case R.id.action_account:
-                        startActivity(new Intent (getApplicationContext (), ViewUserAccountActivity.class));
-                        Toast.makeText ( getApplicationContext (), "Action Account clicked", Toast.LENGTH_SHORT ).show ();
+                        startActivity ( new Intent ( getApplicationContext (), ViewUserAccountActivity.class ) );
                         return true;
                     case R.id.action_home:
-                        startActivity(new Intent (getApplicationContext (), MainActivity.class));
                         Toast.makeText ( getApplicationContext (), "Action Home Clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                 }
