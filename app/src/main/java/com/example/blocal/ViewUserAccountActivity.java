@@ -1,24 +1,38 @@
 package com.example.blocal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ViewUserAccountActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView manageTransaction;
+    private static final String TAG = "ViewUserAccountActivity";
     private TextView editProfile;
+    private TextView manageTransaction;
     private Button signOutButton;
     private ImageView userAvatar;
 
@@ -34,29 +48,52 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         setContentView ( R.layout.activity_view_user_account );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        manageTransaction = findViewById ( R.id.manage_transaction_btn );
+        db = FirebaseFirestore.getInstance ();
+
+        manageTransaction = findViewById ( R.id.manage_transaction_btn);
         editProfile = findViewById ( R.id.edit_profile_btn );
         signOutButton = findViewById ( R.id.sign_out_btn );
         userAvatar = findViewById ( R.id.user_avatar );
 
-        Picasso.get().load(userProfileUri).placeholder ( R.drawable.ic_profile_placeholder ).fit().centerCrop ().into(userAvatar);
+        Picasso.get ().load ( userProfileUri ).placeholder ( R.drawable.ic_profile_placeholder ).fit ().centerCrop ().into ( userAvatar );
 
         editProfile.setOnClickListener ( this );
         editProfile.setOnClickListener ( this );
         signOutButton.setOnClickListener ( this );
-
     }
+
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        final ArrayList<String> productIds = new ArrayList<> ();
+
+        switch (view.getId ()) {
             case R.id.manage_transaction_btn:
+                // get all the existing listings here
+                Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
+                query.get ()
+                        .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful ()) {
+                                    QuerySnapshot qs = task.getResult ();
+                                    for (QueryDocumentSnapshot document : qs) {
+                                        String productId = document.getId ();
+                                        productIds.add ( productId );
+                                    }
+                                    Intent intent = new Intent;
+                                    intent.putStringArrayListExtra ("productIds", productIds);
+                                } else {
+                                    Log.e ( TAG, task.getException ().getMessage () );
+                                }
+                            }
+                        } );
                 break;
             case R.id.edit_profile_btn:
                 break;
             case R.id.sign_out_btn:
-                firebaseAuth.signOut();
-                startActivity(new Intent (this, SignInActivity.class));
+                firebaseAuth.signOut ();
+                startActivity ( new Intent ( this, SignInActivity.class ) );
                 break;
         }
     }
