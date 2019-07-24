@@ -135,6 +135,7 @@ public class Product implements Parcelable {
         parcel.writeString(userId);
         parcel.writeParcelable(dateAdded, i);
         parcel.writeString(photoURL);
+        parcel.writeString(productId);
     }
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
@@ -156,5 +157,6 @@ public class Product implements Parcelable {
         userId = in.readString();
         dateAdded = in.readParcelable(Timestamp.class.getClassLoader());
         photoURL = in.readString();
+        productId = in.readString ();
     }
 }

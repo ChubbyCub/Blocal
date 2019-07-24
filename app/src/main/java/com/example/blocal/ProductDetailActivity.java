@@ -8,6 +8,8 @@ import android.media.Image;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,13 +31,15 @@ import java.text.DecimalFormat;
 
 import model.Product;
 
-public class ProductDetailActivity extends AppCompatActivity {
+public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView productName;
     private TextView productLocation;
     private TextView productTimestamp;
     private TextView productDescription;
     private TextView productPrice;
     private ImageView productImage;
+    private Button makeOfferButton;
+    private Button askSellerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +55,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         productImage = (ImageView) findViewById ( R.id.product_image_main );
         productDescription = findViewById ( R.id.product_description_main );
         productPrice = findViewById ( R.id.product_price_main );
+        makeOfferButton = findViewById ( R.id.make_offer_button );
+        askSellerButton = findViewById ( R.id.ask_seller_button );
 
         productName.setText ( product.getName () );
         productLocation.setText ( product.getLocation () );
         productDescription.setText ( product.getDescription () );
+        makeOfferButton.setOnClickListener ( this );
+        askSellerButton.setOnClickListener ( this );
 
         DecimalFormat df = new DecimalFormat ( "#.##" );
         productPrice.setText ( "$" + df.format ( product.getPrice () ) );
@@ -92,5 +100,16 @@ public class ProductDetailActivity extends AppCompatActivity {
                         Log.d ( "ERROR: ", e.getMessage () );
                     }
                 } );
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId ()) {
+            case R.id.make_offer_button:
+                break;
+            case R.id.ask_seller_button:
+                break;
+        }
+
     }
 }
