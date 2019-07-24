@@ -94,18 +94,6 @@
                         android:text="$2.00"/>
 
                     <TextView
-                        android:id="@+id/product_location_main"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:paddingTop="10dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:textColor="@android:color/black"
-                        android:text="Location"
-                        />
-
-                    <TextView
                         android:id="@+id/product_timestamp_main"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package model;
+package com.example.blocal.model;
 
 public class DistanceCalculator {
     private static final int R = 6371;

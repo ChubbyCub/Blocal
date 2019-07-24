@@ -1,4 +1,4 @@
-package model;
+package com.example.blocal.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 
 
@@ -14,7 +14,6 @@ public class Product implements Parcelable {
     private String name;
     private double price;
     private String description;
-    private String location;
     private String userId;
     private Timestamp dateAdded;
     private String photoURL;
@@ -34,13 +33,12 @@ public class Product implements Parcelable {
         this.photoURL = photoURL;
     }
 
-    public Product(String name, double price, String description, String location, String userId,
+    public Product(String name, double price, String description, String userId,
                    Timestamp dateAdded, String photoURL, String category,
                    ArrayList<Offer> pendingOffers, Offer acceptedOffer) {
         this.name = name;
         this.price = price;
         this.description = description;
-        this.location = location;
         this.userId = userId;
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
@@ -97,14 +95,6 @@ public class Product implements Parcelable {
         this.description = description;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public String getUserId() {
         return userId;
     }
@@ -155,7 +145,6 @@ public class Product implements Parcelable {
         parcel.writeString ( name );
         parcel.writeDouble ( price );
         parcel.writeString ( description );
-        parcel.writeString ( location );
         parcel.writeString ( userId );
         parcel.writeParcelable ( dateAdded, i );
         parcel.writeString ( photoURL );
@@ -179,12 +168,11 @@ public class Product implements Parcelable {
         name = in.readString ();
         price = in.readDouble ();
         description = in.readString ();
-        location = in.readString ();
         userId = in.readString ();
         dateAdded = in.readParcelable ( Timestamp.class.getClassLoader () );
         photoURL = in.readString ();
         productId = in.readString ();
-        acceptedOffer = in.readParcelable ( Offer.class.getClassLoader () );
         pendingOffers = in.readArrayList ( Offer.class.getClassLoader () );
+        acceptedOffer = in.readParcelable ( Offer.class.getClassLoader () );
     }
 }

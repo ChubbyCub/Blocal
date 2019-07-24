@@ -39,8 +39,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import model.DistanceCalculator;
-import model.Product;
+import com.example.blocal.model.DistanceCalculator;
+import com.example.blocal.model.Product;
 import ui.ProductRecyclerAdapter;
 
 
@@ -148,12 +148,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if (!queryDocumentSnapshots.isEmpty ()) {
-                            for (QueryDocumentSnapshot products : queryDocumentSnapshots) {
-                                Product product = products.toObject ( Product.class );
+                            for (QueryDocumentSnapshot productDocument : queryDocumentSnapshots) {
+                                Product product = productDocument.toObject ( Product.class );
+
+                                // set an id here to be able to retrieve the product later when
+                                // the user click make offer
+                                product.setProductId ( productDocument.getId () );
                                 productList.add ( product );
                             }
 
                             getLocationAndSort ( productList );
+
                         } else {
                             Log.d ( "Document returned: ", "empty" );
                         }

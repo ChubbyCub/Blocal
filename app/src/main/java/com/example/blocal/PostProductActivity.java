@@ -54,8 +54,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import model.Offer;
-import model.Product;
+import com.example.blocal.model.Offer;
+import com.example.blocal.model.Product;
 
 public class PostProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, PlaceSelectionListener {
     private static final int GALLERY_CODE = 1;

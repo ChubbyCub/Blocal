@@ -16,12 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blocal.ProductDetailActivity;
 import com.example.blocal.R;
+import com.example.blocal.model.Offer;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import model.DistanceCalculator;
-import model.Product;
+import com.example.blocal.model.DistanceCalculator;
+import com.example.blocal.model.Product;
 
 public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecyclerAdapter.ViewHolder> {
     private Context context;
@@ -73,6 +74,7 @@ public class ProductRecyclerAdapter extends RecyclerView.Adapter<ProductRecycler
             public void onClick(View view) {
                 Log.i ( "Product card: ", "is clicked" );
                 Intent intent = new Intent ( context, ProductDetailActivity.class ).putExtra ( "product", product );
+                intent.setExtrasClassLoader ( Offer.class.getClassLoader () );
                 context.startActivity ( intent );
             }
         } );

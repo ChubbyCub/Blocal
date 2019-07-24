@@ -1,4 +1,4 @@
-package model;
+package com.example.blocal.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package model;
+package com.example.blocal.model;
 
 import org.junit.Test;
 

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.pm.ActivityInfo;
-import android.media.Image;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -17,7 +16,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -25,21 +23,21 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
-import model.Product;
+import com.example.blocal.model.Offer;
+import com.example.blocal.model.Product;
 
 public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView productName;
-    private TextView productLocation;
     private TextView productTimestamp;
     private TextView productDescription;
     private TextView productPrice;
     private ImageView productImage;
     private Button makeOfferButton;
     private Button askSellerButton;
+    private Product product;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +45,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         setContentView ( R.layout.activity_product_detail );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        Product product = getIntent ().getParcelableExtra ( "product" );
+        product = getIntent ().getParcelableExtra ( "product" );
 
         productName = (TextView) findViewById ( R.id.product_name_main );
-        productLocation = (TextView) findViewById ( R.id.product_location_main );
         productTimestamp = (TextView) findViewById ( R.id.product_timestamp_main );
         productImage = (ImageView) findViewById ( R.id.product_image_main );
         productDescription = findViewById ( R.id.product_description_main );
@@ -59,7 +56,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         askSellerButton = findViewById ( R.id.ask_seller_button );
 
         productName.setText ( product.getName () );
-        productLocation.setText ( product.getLocation () );
         productDescription.setText ( product.getDescription () );
         makeOfferButton.setOnClickListener ( this );
         askSellerButton.setOnClickListener ( this );
@@ -106,6 +102,19 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch(view.getId ()) {
             case R.id.make_offer_button:
+                FirebaseFirestore db = FirebaseFirestore.getInstance ();
+                db.collection ( "products" ).document (product.getProductId ())
+                        .get()
+                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful ()) {
+                                    DocumentSnapshot document = task.getResult ();
+                                    ArrayList<Offer> pendingOffers = (ArrayList<Offer>) document.get("pendingOffers");
+                                    Offer offer = new Offer();
+                                }
+                            }
+                        } );
                 break;
             case R.id.ask_seller_button:
                 break;

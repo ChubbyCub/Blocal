@@ -1,10 +1,6 @@
 package ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.blocal.ProductDetailActivity;
 import com.example.blocal.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import model.DistanceCalculator;
-import model.Product;
+import com.example.blocal.model.Product;
 
 public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListingRecyclerAdapter.ViewHolder> {
     private Context context;
