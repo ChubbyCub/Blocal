@@ -7,6 +7,9 @@ public class Offer implements Parcelable {
     private double price;
     private String buyerId;
 
+    public Offer() {
+    }
+
     public Offer(double price, String buyerId) {
         this.price = price;
         this.buyerId = buyerId;

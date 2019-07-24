@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -34,7 +35,8 @@ public class Product implements Parcelable {
     }
 
     public Product(String name, double price, String description, String location, String userId,
-                   Timestamp dateAdded, String photoURL, String category) {
+                   Timestamp dateAdded, String photoURL, String category,
+                   ArrayList<Offer> pendingOffers, Offer acceptedOffer) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -43,6 +45,24 @@ public class Product implements Parcelable {
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
         this.category = category;
+        this.pendingOffers = pendingOffers;
+        this.acceptedOffer = acceptedOffer;
+    }
+
+    public ArrayList<Offer> getPendingOffers() {
+        return pendingOffers;
+    }
+
+    public void setPendingOffers(ArrayList<Offer> pendingOffers) {
+        this.pendingOffers = pendingOffers;
+    }
+
+    public Offer getAcceptedOffer() {
+        return acceptedOffer;
+    }
+
+    public void setAcceptedOffer(Offer acceptedOffer) {
+        this.acceptedOffer = acceptedOffer;
     }
 
     public String getProductId() {

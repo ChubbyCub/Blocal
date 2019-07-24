@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import model.Offer;
 import model.Product;
 
 public class PostProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, PlaceSelectionListener {
@@ -172,6 +173,12 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                                     product.setDateAdded(new Timestamp(new Date()));
                                     product.setCategory(chosenCategory);
                                     product.setUserId(currentUserId);
+
+                                    ArrayList<Offer> pendingOffers = new ArrayList<> ();
+                                    Offer acceptedOffer = new Offer();
+                                    product.setPendingOffers ( pendingOffers );
+                                    product.setAcceptedOffer ( acceptedOffer );
+
                                     collectionReference.add(product);
                                 }
                             });
