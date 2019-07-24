@@ -29,7 +29,7 @@ import ui.SellListingRecyclerAdapter;
 
 public class SellTransaction extends Fragment {
     private static final String TAG = "SellTransaction";
-    private ArrayList<String> productIds;
+    private ArrayList<Product> listings;
     private RecyclerView recyclerView;
 
     FirebaseFirestore db;
@@ -40,8 +40,7 @@ public class SellTransaction extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate ( R.layout.fragment_sell_transaction, container, false );
         Bundle extras = getActivity().getIntent().getExtras ();
-        productIds = extras.getStringArrayList ( "productIds" );
-        Log.d(TAG, productIds.toString ());
+        listings = extras.getParcelableArrayList ( "listings" );
 
         db = FirebaseFirestore.getInstance ();
         products = db.collection ( "products" );
@@ -50,7 +49,7 @@ public class SellTransaction extends Fragment {
         recyclerView.setHasFixedSize ( true );
         recyclerView.setLayoutManager ( new LinearLayoutManager (getActivity ()));
 
-        SellListingRecyclerAdapter mAdapter = new SellListingRecyclerAdapter ( getActivity (), productIds );
+        SellListingRecyclerAdapter mAdapter = new SellListingRecyclerAdapter ( getActivity (), listings);
         recyclerView.setAdapter ( mAdapter );
         mAdapter.notifyDataSetChanged ();
         return view;

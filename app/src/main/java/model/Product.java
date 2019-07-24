@@ -17,9 +17,16 @@ public class Product implements Parcelable {
     private String photoURL;
     private GeoPoint coordinates;
     private String category;
+    private String productId;
 
     public Product() {
 
+    }
+
+    public Product(String name, String productId, String photoURL) {
+        this.name = name;
+        this.productId = productId;
+        this.photoURL = photoURL;
     }
 
     public Product(String name, double price, String description, String location, String userId,
@@ -32,6 +39,14 @@ public class Product implements Parcelable {
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
         this.category = category;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getName() {

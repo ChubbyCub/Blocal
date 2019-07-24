@@ -24,19 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import model.Product;
 import ui.SectionPageAdapter;
 
 public class ManageTransactionActivity extends AppCompatActivity {
     private static final String TAG = "ManageTransactionActivity";
 
-    private SectionPageAdapter mSectionPageAdapter;
     private SellTransaction sellTransactionFragment;
     private BuyTransaction buyTransactionFragment;
     private ViewPager mViewPager;
-    private ArrayList<String> productIds;
-
-    private FirebaseFirestore db;
-    private CollectionReference products;
+    private ArrayList<Product> listings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +41,12 @@ public class ManageTransactionActivity extends AppCompatActivity {
         setContentView ( R.layout.activity_manage_transaction );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        final Bundle stringArrayList = getIntent ().getExtras ();
-        productIds = stringArrayList.getStringArrayList ( "productIds" );
+        listings = getIntent ().getParcelableArrayListExtra ( "listings" );
 
-        db = FirebaseFirestore.getInstance ();
-        products = db.collection ( "products" );
 
         sellTransactionFragment = new SellTransaction ();
         buyTransactionFragment = new BuyTransaction ();
 
-        mSectionPageAdapter = new SectionPageAdapter ( getSupportFragmentManager () );
         mViewPager = (ViewPager) findViewById ( R.id.container );
         setupViewPager ( mViewPager );
 
@@ -74,7 +67,7 @@ public class ManageTransactionActivity extends AppCompatActivity {
 
     private void sendDataToFragment() {
         Bundle mBundle = new Bundle ();
-        mBundle.putStringArrayList ( "productIds", productIds );
+        mBundle.putParcelableArrayList ( "listings", listings );
         sellTransactionFragment.setArguments ( mBundle );
     }
 

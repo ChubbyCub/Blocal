@@ -18,6 +18,7 @@ import com.example.blocal.ProductDetailActivity;
 import com.example.blocal.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.DistanceCalculator;
@@ -25,11 +26,11 @@ import model.Product;
 
 public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListingRecyclerAdapter.ViewHolder> {
     private Context context;
-    private List<String> productIds;
+    private ArrayList<Product> listings;
 
-    public SellListingRecyclerAdapter(Context context, List<String> productIds) {
+    public SellListingRecyclerAdapter(Context context, ArrayList<Product> listings) {
         this.context = context;
-        this.productIds = productIds;
+        this.listings = listings;
     }
 
     @NonNull
@@ -42,10 +43,10 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final String productId = productIds.get ( position );
-        holder.productListingId.setText((productId));
+        Product product = listings.get ( position );
+        holder.productName.setText((product.getName ()));
 
-//        Picasso.get ().load ( url ).placeholder ( R.drawable.ic_image_placeholder ).fit ().centerCrop ().into ( holder.image );
+        Picasso.get ().load ( product.getPhotoURL () ).placeholder ( R.drawable.ic_image_placeholder ).fit ().centerCrop ().into ( holder.productImage );
 
 //        holder.itemView.setOnClickListener ( new View.OnClickListener () {
 //            @Override
@@ -61,18 +62,20 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
 
     @Override
     public int getItemCount() {
-        return productIds.size ();
+        return listings.size ();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView productListingId;
+        public TextView productName;
+        public ImageView productImage;
 
         public ViewHolder(@NonNull View itemView, Context ctx) {
             super ( itemView );
             context = ctx;
 
-            productListingId = itemView.findViewById ( R.id.product_listing_id );
+            productName = itemView.findViewById ( R.id.listing_name );
+            productImage = itemView.findViewById ( R.id.listing_thumbnail );
         }
     }
 

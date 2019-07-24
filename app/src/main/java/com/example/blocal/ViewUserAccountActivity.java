@@ -30,6 +30,8 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Product;
+
 public class ViewUserAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ViewUserAccountActivity";
     private TextView editProfile;
@@ -51,7 +53,7 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
         db = FirebaseFirestore.getInstance ();
 
-        manageTransaction = findViewById ( R.id.manage_transaction_btn);
+        manageTransaction = findViewById ( R.id.manage_transaction_btn );
         editProfile = findViewById ( R.id.edit_profile_btn );
         signOutButton = findViewById ( R.id.sign_out_btn );
         userAvatar = findViewById ( R.id.user_avatar );
@@ -66,11 +68,10 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        final ArrayList<String> productIds = new ArrayList<> ();
-
+        final ArrayList<Product> listings = new ArrayList<> ();
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
-                Toast.makeText (this, "manage transaction button clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText ( this, "manage transaction button clicked", Toast.LENGTH_SHORT ).show ();
                 Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
                 query.get ()
                         .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
@@ -79,12 +80,15 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                                 if (task.isSuccessful ()) {
                                     QuerySnapshot qs = task.getResult ();
                                     for (QueryDocumentSnapshot document : qs) {
-                                        String productId = document.getId ();
-                                        productIds.add ( productId );
+                                        Product product = new Product ();
+                                        product.setProductId ( document.getId());
+                                        product.setName ( document.get ( "name" ).toString () );
+                                        product.setPhotoURL ( document.get ( "photoURL" ).toString () );
+                                        listings.add ( product );
                                     }
-                                    Intent intent = new Intent(getApplicationContext (), ManageTransactionActivity.class);
-                                    intent.putStringArrayListExtra ("productIds", productIds);
-                                    startActivity(intent);
+                                    Intent intent = new Intent ( getApplicationContext (), ManageTransactionActivity.class );
+                                    intent.putParcelableArrayListExtra ( "listings", listings );
+                                    startActivity ( intent );
                                 } else {
                                     Log.e ( TAG, task.getException ().getMessage () );
                                 }
@@ -99,7 +103,6 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                 break;
         }
     }
-
 
 
     @Override

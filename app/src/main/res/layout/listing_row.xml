@@ -1,31 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
-
-    <TextView
-        android:id="@+id/product_listing_id"
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Product Listing Id"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        />
+        android:orientation="horizontal"
+        android:columnCount="3"
+        >
+        <ImageView
+            android:id="@+id/listing_thumbnail"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_image_placeholder"
+            />
 
-    <Button
-        android:id="@+id/see_all_offers_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/custom_button_filling"
-        android:text="See all offers"/>
+        <TextView
+            android:id="@+id/listing_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:text="Product Listing Id"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            />
 
+        <Button
+            android:id="@+id/see_all_offers_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_gravity="end|center"
+            android:background="@drawable/custom_button_filling"
+            android:textSize="12sp"
+            android:elevation="0dp"
+            android:textColor="@android:color/white"
+            android:text="See all offers"/>
+    </GridLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>
