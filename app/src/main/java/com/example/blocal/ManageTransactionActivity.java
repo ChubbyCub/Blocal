@@ -73,8 +73,8 @@ public class ManageTransactionActivity extends AppCompatActivity {
     }
 
     private void sendDataToFragment() {
-        Bundle mBundle = new Bundle();
-        mBundle.putStringArrayList ( "productIds",productIds );
+        Bundle mBundle = new Bundle ();
+        mBundle.putStringArrayList ( "productIds", productIds );
         sellTransactionFragment.setArguments ( mBundle );
     }
 
@@ -93,7 +93,7 @@ public class ManageTransactionActivity extends AppCompatActivity {
                         startActivity ( new Intent ( getApplicationContext (), ViewUserAccountActivity.class ) );
                         return true;
                     case R.id.action_home:
-                        Toast.makeText ( getApplicationContext (), "Action Home Clicked", Toast.LENGTH_SHORT ).show ();
+                        startActivity ( new Intent ( getApplicationContext (), MainActivity.class ) );
                         return true;
                 }
                 return false;

@@ -8,12 +8,14 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-
-    <ImageView
-        android:id="@+id/product_image_sell_transaction"
+    <TextView
+        android:id="@+id/product_listing_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:srcCompat="@tools:sample/avatars[12]" />
+        android:text="Product Listing Id"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        />
 
     <Button
         android:id="@+id/see_all_offers_btn"

@@ -18,17 +18,22 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 import model.Product;
+import ui.SellListingRecyclerAdapter;
 
 public class SellTransaction extends Fragment {
     private static final String TAG = "SellTransaction";
     private ArrayList<String> productIds;
     private RecyclerView recyclerView;
+
+    FirebaseFirestore db;
+    CollectionReference products;
 
     @Nullable
     @Override
@@ -38,13 +43,18 @@ public class SellTransaction extends Fragment {
         productIds = extras.getStringArrayList ( "productIds" );
         Log.d(TAG, productIds.toString ());
 
+        db = FirebaseFirestore.getInstance ();
+        products = db.collection ( "products" );
+
         recyclerView = (RecyclerView) view.findViewById ( R.id.sell_listing_recycler_view );
         recyclerView.setHasFixedSize ( true );
         recyclerView.setLayoutManager ( new LinearLayoutManager (getActivity ()));
 
+        SellListingRecyclerAdapter mAdapter = new SellListingRecyclerAdapter ( getActivity (), productIds );
+        recyclerView.setAdapter ( mAdapter );
+        mAdapter.notifyDataSetChanged ();
         return view;
     }
-
 
 
 }

@@ -25,26 +25,27 @@ import model.Product;
 
 public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListingRecyclerAdapter.ViewHolder> {
     private Context context;
-    private List<String> photoUrls;
+    private List<String> productIds;
 
-    public SellListingRecyclerAdapter(Context context, List<String> photoUrls) {
+    public SellListingRecyclerAdapter(Context context, List<String> productIds) {
         this.context = context;
-        this.photoUrls = photoUrls;
+        this.productIds = productIds;
     }
 
     @NonNull
     @Override
     public SellListingRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from ( context ).inflate ( R.layout.product_row, parent, false );
+        View view = LayoutInflater.from ( context ).inflate ( R.layout.listing_row, parent, false );
 
         return new ViewHolder ( view, context );
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final String url = photoUrls.get ( position );
+        final String productId = productIds.get ( position );
+        holder.productListingId.setText((productId));
 
-        Picasso.get ().load ( url ).placeholder ( R.drawable.ic_image_placeholder ).fit ().centerCrop ().into ( holder.image );
+//        Picasso.get ().load ( url ).placeholder ( R.drawable.ic_image_placeholder ).fit ().centerCrop ().into ( holder.image );
 
 //        holder.itemView.setOnClickListener ( new View.OnClickListener () {
 //            @Override
@@ -60,18 +61,18 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
 
     @Override
     public int getItemCount() {
-        return photoUrls.size ();
+        return productIds.size ();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
+        public TextView productListingId;
 
         public ViewHolder(@NonNull View itemView, Context ctx) {
             super ( itemView );
             context = ctx;
 
-            image = itemView.findViewById ( R.id.product_image_sell_transaction );
+            productListingId = itemView.findViewById ( R.id.product_listing_id );
         }
     }
 
