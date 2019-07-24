@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,6 +68,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     private AutocompleteSupportFragment autocompleteSupportFragment;
     private EditText productPriceText;
     private Button postProductButton;
+    private FloatingActionButton trashButton;
     private Uri productImageUri;
     private ImageView productImageView;
 
@@ -96,6 +98,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         productPriceText = findViewById(R.id.product_price_post);
         postProductButton = findViewById(R.id.post_product_button);
         productImageView = findViewById(R.id.product_image_post);
+        trashButton = findViewById ( R.id.trash_btn_main );
 
         fireBaseAuth = fireBaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -107,6 +110,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
         uploadPhotoButton.setOnClickListener(this);
         postProductButton.setOnClickListener(this);
         productCategorySpinner.setOnItemSelectedListener(this);
+        trashButton.setOnClickListener ( this );
 
         // initialize the autocomplete
         autocompleteSupportFragment.setPlaceFields (Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME));
@@ -213,6 +217,13 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                 postProduct();
                 startActivity(new Intent(PostProductActivity.this, MainActivity.class));
                 finish();
+                break;
+            case R.id.trash_btn_main:
+                productImageUri = null;
+                productImageView.setImageResource ( 0 );
+                productImageView.setBackgroundResource ( R.drawable.custom_border );
+                takePhotoButton.setVisibility ( View.VISIBLE );
+                uploadPhotoButton.setVisibility ( View.VISIBLE );
                 break;
         }
     }
