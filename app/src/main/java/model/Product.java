@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
+
 
 public class Product implements Parcelable {
     private String name;
@@ -18,6 +20,8 @@ public class Product implements Parcelable {
     private GeoPoint coordinates;
     private String category;
     private String productId;
+    private ArrayList<Offer> pendingOffers;
+    private Offer acceptedOffer;
 
     public Product() {
 
@@ -128,20 +132,22 @@ public class Product implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(name);
-        parcel.writeDouble(price);
-        parcel.writeString(description);
-        parcel.writeString(location);
-        parcel.writeString(userId);
-        parcel.writeParcelable(dateAdded, i);
-        parcel.writeString(photoURL);
-        parcel.writeString(productId);
+        parcel.writeString ( name );
+        parcel.writeDouble ( price );
+        parcel.writeString ( description );
+        parcel.writeString ( location );
+        parcel.writeString ( userId );
+        parcel.writeParcelable ( dateAdded, i );
+        parcel.writeString ( photoURL );
+        parcel.writeString ( productId );
+        parcel.writeList ( pendingOffers );
+        parcel.writeParcelable ( acceptedOffer, i );
     }
 
-    public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
+    public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product> () {
 
         public Product createFromParcel(Parcel in) {
-            return new Product(in);
+            return new Product ( in );
         }
 
         public Product[] newArray(int size) {
@@ -150,13 +156,15 @@ public class Product implements Parcelable {
     };
 
     private Product(Parcel in) {
-        name = in.readString();
-        price = in.readDouble();
-        description = in.readString();
-        location = in.readString();
-        userId = in.readString();
-        dateAdded = in.readParcelable(Timestamp.class.getClassLoader());
-        photoURL = in.readString();
+        name = in.readString ();
+        price = in.readDouble ();
+        description = in.readString ();
+        location = in.readString ();
+        userId = in.readString ();
+        dateAdded = in.readParcelable ( Timestamp.class.getClassLoader () );
+        photoURL = in.readString ();
         productId = in.readString ();
+        acceptedOffer = in.readParcelable ( Offer.class.getClassLoader () );
+        pendingOffers = in.readArrayList ( Offer.class.getClassLoader () );
     }
 }
