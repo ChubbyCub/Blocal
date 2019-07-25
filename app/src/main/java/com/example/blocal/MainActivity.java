@@ -129,10 +129,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         return true;
                     case R.id.action_account:
                         startActivity(new Intent (getApplicationContext (), ViewUserAccountActivity.class));
-                        Toast.makeText ( getApplicationContext (), "Action Account clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                     case R.id.action_home:
-                        Toast.makeText ( getApplicationContext (), "Action Home Clicked", Toast.LENGTH_SHORT ).show ();
                         return true;
                 }
                 return false;

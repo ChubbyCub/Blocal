@@ -1,9 +1,12 @@
 package ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blocal.R;
+import com.example.blocal.ManageOffersActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -36,19 +40,23 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = listings.get ( position );
+        final Product product = listings.get ( position );
         holder.productName.setText((product.getName ()));
 
-        Picasso.get ().load ( product.getPhotoURL () ).placeholder ( R.drawable.ic_image_placeholder ).fit ().centerCrop ().into ( holder.productImage );
+        Picasso.get ()
+                .load ( product.getPhotoURL () )
+                .placeholder ( R.drawable.ic_image_placeholder )
+                .fit ().centerCrop ().into ( holder.productImage );
 
-//        holder.itemView.setOnClickListener ( new View.OnClickListener () {
-//            @Override
-//            public void onClick(View view) {
-//                Log.i ( "Product card: ", "is clicked" );
-//                Intent intent = new Intent ( context, ProductDetailActivity.class ).putExtra ( "product", product );
-//                context.startActivity ( intent );
-//            }
-//        } );
+        holder.seeAllOffersButton.setOnClickListener ( new View.OnClickListener () {
+            @Override
+            public void onClick(View view) {
+                Log.i ( "See all offers button", "is clicked" );
+                Intent intent = new Intent(context, ManageOffersActivity.class);
+                intent.putExtra("product", product);
+                context.startActivity(intent);
+            }
+        } );
 
     }
 
@@ -62,6 +70,7 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView productName;
         public ImageView productImage;
+        public Button seeAllOffersButton;
 
         public ViewHolder(@NonNull View itemView, Context ctx) {
             super ( itemView );
@@ -69,6 +78,7 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
 
             productName = itemView.findViewById ( R.id.listing_name );
             productImage = itemView.findViewById ( R.id.listing_thumbnail );
+            seeAllOffersButton = itemView.findViewById ( R.id.see_all_offers_btn );
         }
     }
 

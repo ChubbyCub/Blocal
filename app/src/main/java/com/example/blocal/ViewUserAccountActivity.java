@@ -67,7 +67,6 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         final ArrayList<Product> listings = new ArrayList<> ();
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
-                Toast.makeText ( this, "manage transaction button clicked", Toast.LENGTH_SHORT ).show ();
                 Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
                 query.get ()
                         .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
