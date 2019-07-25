@@ -1,24 +1,32 @@
 package com.example.blocal;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,6 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.example.blocal.model.Offer;
 import com.example.blocal.model.Product;
@@ -112,18 +121,156 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View view) {
-        switch(view.getId ()) {
+        switch (view.getId ()) {
             case R.id.make_offer_button:
-                if(currentUserId.equals(product.getUserId ())) {
-                    Toast.makeText (getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT).show();
+                if (currentUserId.equals ( product.getUserId () )) {
+                    Toast.makeText ( getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT ).show ();
                 } else {
+                    LayoutInflater li = LayoutInflater.from ( getApplicationContext () );
+                    View promptView = li.inflate ( R.layout.offer_prompt, (ViewGroup) null );
 
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder ( ProductDetailActivity.this, R.style.MyDialogTheme );
+
+                    alertDialogBuilder.setView ( promptView );
+
+                    final EditText userInput = (EditText) promptView.findViewById ( R.id.offer_amount_edit_text );
+
+                    alertDialogBuilder
+                            .setCancelable ( false )
+                            .setPositiveButton ( "Submit",
+                                    new DialogInterface.OnClickListener () {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            createOffer ( Double.parseDouble ( userInput.getText ().toString () ) );
+                                        }
+                                    } )
+                            .setNegativeButton ( "Cancel",
+                                    new DialogInterface.OnClickListener () {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel ();
+                                        }
+                                    } );
+
+                    AlertDialog alertDialog = alertDialogBuilder.create ();
+                    alertDialog.show ();
+                    Window window = alertDialog.getWindow ();
+                    window.setLayout ( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
                 }
                 break;
             case R.id.ask_seller_button:
                 break;
         }
 
+    }
+
+    // a horribly long function... yikes! TODO: Refactor
+
+    private void createOffer(final double price) {
+        db = FirebaseFirestore.getInstance ();
+        final CollectionReference offers = db.collection ( "offers" );
+
+        offers.get ()
+                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            final Offer offer = new Offer (
+                                    price,
+                                    currentUserId,
+                                    product.getUserId (),
+                                    product.getProductId () );
+
+                            final Query query = offers.whereEqualTo ( "buyerId", currentUserId );
+
+                            query.get ().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if (queryDocumentSnapshots.isEmpty ()) {
+                                        offers.add ( offer ).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                addOfferToProductList ( documentReference.getId () );
+                                                addOfferToSellerList ( documentReference.getId () );
+                                                addOfferToBuyerList ( documentReference.getId () );
+                                                Toast.makeText ( getApplicationContext (),
+                                                        "Successfully made an offer",
+                                                        Toast.LENGTH_SHORT ).show ();
+                                            }
+                                        } );
+                                    } else {
+                                        Query secondFilter = query.whereEqualTo ( "productId", product.getProductId () );
+                                        secondFilter.get ().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                if (queryDocumentSnapshots.isEmpty ()) {
+                                                    offers.add ( offer ).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
+                                                        @Override
+                                                        public void onSuccess(DocumentReference documentReference) {
+                                                            addOfferToProductList ( documentReference.getId () );
+                                                            addOfferToSellerList ( documentReference.getId () );
+                                                            addOfferToBuyerList ( documentReference.getId () );
+                                                            Toast.makeText ( getApplicationContext (),
+                                                                    "Successfully made an offer",
+                                                                    Toast.LENGTH_SHORT ).show ();
+
+                                                        }
+                                                    } );
+                                                } else {
+                                                    Toast.makeText ( ProductDetailActivity.this,
+                                                            "You already offered on this product",
+                                                            Toast.LENGTH_SHORT ).show ();
+                                                }
+                                            }
+                                        } );
+                                    }
+                                }
+                            } );
+                        }
+                    }
+                } );
+    }
+
+    private void addOfferToProductList(final String offerId) {
+        CollectionReference products = db.collection ( "products" );
+        DocumentReference df = products.document ( product.getProductId () );
+        ArrayList<String> pendingOffers = product.getPendingOffers ();
+        pendingOffers.add ( offerId );
+        df.update ( "pendingOffers", pendingOffers );
+    }
+
+    private void addOfferToSellerList(final String offerId) {
+        CollectionReference users = db.collection ( "users" );
+        final DocumentReference df = users.document ( product.getUserId () );
+        df.get ()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            ArrayList<String> receivedOffers = (ArrayList<String>) document.get ( "receivedOffers" );
+                            receivedOffers.add ( offerId );
+                            df.update ( "receivedOffers", receivedOffers );
+                        }
+                    }
+                } );
+    }
+
+    private void addOfferToBuyerList(final String offerId) {
+        CollectionReference users = db.collection ( "users" );
+        final DocumentReference df = users.document ( currentUserId );
+        df.get ()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            ArrayList<String> sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
+                            sentOffers.add ( offerId );
+                            df.update ( "sentOffers", sentOffers );
+                        }
+                    }
+                } );
     }
 
     @Override

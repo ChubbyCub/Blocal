@@ -49,7 +49,7 @@ public class Product implements Parcelable {
         this.pendingOffers = pendingOffers;
     }
 
-    public List<String> getPendingOffers() {
+    public ArrayList<String> getPendingOffers() {
         return pendingOffers;
     }
 

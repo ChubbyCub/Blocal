@@ -11,4 +11,12 @@
     <style name="MyTheme" parents="AppTheme">
         <item name="android:windowBackground">@android:color/white</item>
     </style>
+
+    <style name="MyDialogTheme" parents="Theme.AppCompat" >
+        <item name="android:windowMinWidthMajor">70%</item>
+        <item name="android:windowMinWidthMinor">70%</item>
+        <item name="android:windowBackground">@color/quantum_white_100</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>
