@@ -7,14 +7,24 @@ public class Offer implements Parcelable {
     private double price;
     private String sellerId;
     private String buyerId;
+    private String productId;
 
     public Offer() {
     }
 
-    public Offer(double price, String buyerId, String sellerId) {
+    public Offer(double price, String buyerId, String sellerId, String productId) {
         this.price = price;
         this.buyerId = buyerId;
         this.sellerId = sellerId;
+        this.productId = productId;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
     }
 
     public String getSellerId() {
@@ -41,10 +51,10 @@ public class Offer implements Parcelable {
         this.buyerId = buyerId;
     }
 
-    public static final Parcelable.Creator<Offer> CREATOR = new Parcelable.Creator<Offer>() {
+    public static final Parcelable.Creator<Offer> CREATOR = new Parcelable.Creator<Offer> () {
 
         public Offer createFromParcel(Parcel in) {
-            return new Offer(in);
+            return new Offer ( in );
         }
 
         public Offer[] newArray(int size) {
@@ -53,9 +63,10 @@ public class Offer implements Parcelable {
     };
 
     private Offer(Parcel in) {
-        price = in.readDouble();
-        buyerId = in.readString();
+        price = in.readDouble ();
+        buyerId = in.readString ();
         sellerId = in.readString ();
+        productId = in.readString ();
     }
 
     @Override
@@ -68,5 +79,6 @@ public class Offer implements Parcelable {
         parcel.writeDouble ( price );
         parcel.writeString ( buyerId );
         parcel.writeString ( sellerId );
+        parcel.writeString ( productId );
     }
 }

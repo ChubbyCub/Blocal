@@ -21,10 +21,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -118,17 +120,17 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View view) {
-        switch(view.getId ()) {
+        switch (view.getId ()) {
             case R.id.make_offer_button:
-                if(currentUserId.equals(product.getUserId ())) {
-                    Toast.makeText (getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT).show();
+                if (currentUserId.equals ( product.getUserId () )) {
+                    Toast.makeText ( getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT ).show ();
                 } else {
-                    LayoutInflater li = LayoutInflater.from(getApplicationContext ());
-                    View promptView = li.inflate ( R.layout.offer_prompt, (ViewGroup) null);
+                    LayoutInflater li = LayoutInflater.from ( getApplicationContext () );
+                    View promptView = li.inflate ( R.layout.offer_prompt, (ViewGroup) null );
 
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder ( ProductDetailActivity.this, R.style.MyDialogTheme );
 
-                    alertDialogBuilder.setView(promptView);
+                    alertDialogBuilder.setView ( promptView );
 
                     final EditText userInput = (EditText) promptView.findViewById ( R.id.offer_amount_edit_text );
 
@@ -138,7 +140,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     new DialogInterface.OnClickListener () {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                                            createOffer ( Double.parseDouble ( userInput.getText ().toString () ) );
                                         }
                                     } )
                             .setNegativeButton ( "Cancel",
@@ -149,8 +151,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                         }
                                     } );
 
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
+                    AlertDialog alertDialog = alertDialogBuilder.create ();
+                    alertDialog.show ();
                     Window window = alertDialog.getWindow ();
                     window.setLayout ( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
                 }
@@ -159,6 +161,44 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 break;
         }
 
+    }
+
+    private void createOffer(final double price) {
+        db = FirebaseFirestore.getInstance ();
+        final CollectionReference offers = db.collection ( "offers" );
+
+        offers.get ()
+                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            final Offer offer = new Offer (
+                                    price,
+                                    currentUserId,
+                                    product.getUserId (),
+                                    product.getProductId ());
+
+                            // stop one user make double offer
+                            Query query = offers.whereEqualTo ( "buyerId", currentUserId );
+                            query.get().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if(queryDocumentSnapshots != null) {
+                                        Toast.makeText ( ProductDetailActivity.this, "You already offered on this product", Toast.LENGTH_SHORT ).show();
+                                        return;
+                                    } else {
+                                        offers.add ( offer ).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Toast.makeText(getApplicationContext (), "Successfully made an offer", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } );
+                                    }
+                                }
+                            } );
+                        }
+                    }
+                } );
     }
 
     @Override
