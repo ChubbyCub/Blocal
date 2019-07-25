@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#00695c</color>
     <color name="colorAccent">#b2dfdb</color>
     <color name="colorPink">#ff0066</color>
-    <color name="tab1Color">#FFC916</color>
+    <color name="dialogBackground">#E5E5E5</color>
     <color name="tab2Color">#DA8200</color>
     <color name="tab3Color">#5b89ff</color>
 </resources>

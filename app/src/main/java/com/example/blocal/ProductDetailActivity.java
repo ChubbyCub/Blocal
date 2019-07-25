@@ -1,14 +1,20 @@
 package com.example.blocal;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,7 +123,36 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 if(currentUserId.equals(product.getUserId ())) {
                     Toast.makeText (getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT).show();
                 } else {
+                    LayoutInflater li = LayoutInflater.from(getApplicationContext ());
+                    View promptView = li.inflate ( R.layout.offer_prompt, (ViewGroup) null);
 
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder ( ProductDetailActivity.this, R.style.MyDialogTheme );
+
+                    alertDialogBuilder.setView(promptView);
+
+                    final EditText userInput = (EditText) promptView.findViewById ( R.id.offer_amount_edit_text );
+
+                    alertDialogBuilder
+                            .setCancelable ( false )
+                            .setPositiveButton ( "Submit",
+                                    new DialogInterface.OnClickListener () {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        }
+                                    } )
+                            .setNegativeButton ( "Cancel",
+                                    new DialogInterface.OnClickListener () {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel ();
+                                        }
+                                    } );
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                    Window window = alertDialog.getWindow ();
+                    window.setLayout ( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT );
                 }
                 break;
             case R.id.ask_seller_button:
