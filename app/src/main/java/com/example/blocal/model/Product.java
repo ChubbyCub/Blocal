@@ -23,7 +23,7 @@ public class Product implements Parcelable {
     private GeoPoint coordinates;
     private String category;
     private String productId;
-    private ArrayList<String> pendingOffers = null;
+    private ArrayList<String> pendingOffers;
 
 
     public Product() {

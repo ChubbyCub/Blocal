@@ -53,8 +53,9 @@ public class Offer implements Parcelable {
     };
 
     private Offer(Parcel in) {
-        buyerId = in.readString();
         price = in.readDouble();
+        buyerId = in.readString();
+        sellerId = in.readString ();
     }
 
     @Override
@@ -66,5 +67,6 @@ public class Offer implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeDouble ( price );
         parcel.writeString ( buyerId );
+        parcel.writeString ( sellerId );
     }
 }

@@ -22,6 +22,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,10 +94,22 @@ public class SignInActivity extends AppCompatActivity {
         final String userEmail = user.getEmail ();
 
         // Create a user Map so we can create a user in the user collection
-        final Map<String, String> userObj = new HashMap<> ();
+        final Map<String, Object> userObj = new HashMap<> ();
         userObj.put ( "userId", userId );
         userObj.put ( "userDisplayName", userDisplayName );
         userObj.put ( "userEmail", userEmail );
+
+        ArrayList<String> acceptedOffers = new ArrayList<> ();
+        userObj.put ("acceptedOffers", acceptedOffers);
+
+        ArrayList<String> rejectedOffers = new ArrayList<> ();
+        userObj.put ("rejectedOffers", rejectedOffers);
+
+        ArrayList<String> receivedOffers = new ArrayList<> ();
+        userObj.put("receivedOffers", receivedOffers);
+
+        ArrayList<String> sentOffers = new ArrayList<> ();
+        userObj.put("sentOffers", sentOffers);
 
         final DocumentReference userDf = collectionReferenceUser.document ( userId );
 

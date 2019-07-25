@@ -15,9 +15,13 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,6 +33,8 @@ import java.util.ArrayList;
 import com.example.blocal.model.Offer;
 import com.example.blocal.model.Product;
 
+import javax.annotation.Nullable;
+
 public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView productName;
     private TextView productTimestamp;
@@ -38,6 +44,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     private Button makeOfferButton;
     private Button askSellerButton;
     private Product product;
+
+    private FirebaseFirestore db;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser user;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +84,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     private void setUserName(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance ();
+        db = FirebaseFirestore.getInstance ();
         CollectionReference users = db.collection ( "users" );
         Query query = users.whereEqualTo ( "userId", userId );
 
@@ -102,11 +113,21 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch(view.getId ()) {
             case R.id.make_offer_button:
-
+                CollectionReference offers = db.collection ( "offers" );
+                Offer offer = new Offer();
+                // TODO: COME BACK TO THIS FEATURE LATER
                 break;
             case R.id.ask_seller_button:
                 break;
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart ();
+        firebaseAuth = FirebaseAuth.getInstance ();
+        user = firebaseAuth.getCurrentUser ();
+        currentUserId = user.getUid ();
     }
 }

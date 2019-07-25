@@ -173,6 +173,7 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
                                     product.setDateAdded(new Timestamp(new Date()));
                                     product.setCategory(chosenCategory);
                                     product.setUserId(currentUserId);
+
                                     ArrayList<String> pendingOffers = new ArrayList<> ();
                                     product.setPendingOffers ( pendingOffers );
                                     collectionReference.add(product);
