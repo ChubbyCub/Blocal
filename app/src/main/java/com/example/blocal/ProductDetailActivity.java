@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -113,9 +114,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch(view.getId ()) {
             case R.id.make_offer_button:
-                CollectionReference offers = db.collection ( "offers" );
-                Offer offer = new Offer();
-                // TODO: COME BACK TO THIS FEATURE LATER
+                if(currentUserId.equals(product.getUserId ())) {
+                    Toast.makeText (getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT).show();
+                } else {
+
+                }
                 break;
             case R.id.ask_seller_button:
                 break;
