@@ -192,6 +192,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                             public void onSuccess(DocumentReference documentReference) {
                                                 addOfferToProductList ( documentReference.getId () );
                                                 addOfferToSellerList ( documentReference.getId () );
+                                                addOfferToBuyerList ( documentReference.getId () );
                                                 Toast.makeText ( getApplicationContext (),
                                                         "Successfully made an offer",
                                                         Toast.LENGTH_SHORT ).show ();
@@ -208,6 +209,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                                         public void onSuccess(DocumentReference documentReference) {
                                                             addOfferToProductList ( documentReference.getId () );
                                                             addOfferToSellerList ( documentReference.getId () );
+                                                            addOfferToBuyerList ( documentReference.getId () );
                                                             Toast.makeText ( getApplicationContext (),
                                                                     "Successfully made an offer",
                                                                     Toast.LENGTH_SHORT ).show ();
@@ -254,8 +256,21 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 } );
     }
 
-    private void addOfferToBuyerLists() {
-
+    private void addOfferToBuyerList(final String offerId) {
+        CollectionReference users = db.collection ( "users" );
+        final DocumentReference df = users.document ( currentUserId );
+        df.get ()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            ArrayList<String> sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
+                            sentOffers.add ( offerId );
+                            df.update ( "sentOffers", sentOffers );
+                        }
+                    }
+                } );
     }
 
     @Override
