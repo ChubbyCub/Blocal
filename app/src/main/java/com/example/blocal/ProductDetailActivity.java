@@ -38,6 +38,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.example.blocal.model.Offer;
 import com.example.blocal.model.Product;
@@ -180,55 +181,77 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     product.getUserId (),
                                     product.getProductId () );
 
-                            final Query query = offers.whereEqualTo("buyerId", currentUserId);
+                            final Query query = offers.whereEqualTo ( "buyerId", currentUserId );
 
-                            query.get().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
+                            query.get ().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    if(queryDocumentSnapshots.isEmpty ()) {
+                                    if (queryDocumentSnapshots.isEmpty ()) {
                                         offers.add ( offer ).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
-                                                Toast.makeText(getApplicationContext (),
+                                                addOfferToProductList ( documentReference.getId () );
+                                                addOfferToSellerList ( documentReference.getId () );
+                                                Toast.makeText ( getApplicationContext (),
                                                         "Successfully made an offer",
-                                                        Toast.LENGTH_SHORT).show();
-                                                // need to post the offer to the product collection
-                                                // need to add the offer to the user
+                                                        Toast.LENGTH_SHORT ).show ();
                                             }
                                         } );
                                     } else {
                                         Query secondFilter = query.whereEqualTo ( "productId", product.getProductId () );
-                                        secondFilter.get().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
+                                        secondFilter.get ().addOnSuccessListener ( new OnSuccessListener<QuerySnapshot> () {
                                             @Override
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                if(queryDocumentSnapshots.isEmpty ()) {
-                                                    offers.add(offer).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
+                                                if (queryDocumentSnapshots.isEmpty ()) {
+                                                    offers.add ( offer ).addOnSuccessListener ( new OnSuccessListener<DocumentReference> () {
                                                         @Override
                                                         public void onSuccess(DocumentReference documentReference) {
-                                                            Toast.makeText(getApplicationContext (),
+                                                            addOfferToProductList ( documentReference.getId () );
+                                                            addOfferToSellerList ( documentReference.getId () );
+                                                            Toast.makeText ( getApplicationContext (),
                                                                     "Successfully made an offer",
-                                                                    Toast.LENGTH_SHORT).show();
+                                                                    Toast.LENGTH_SHORT ).show ();
+
                                                         }
                                                     } );
                                                 } else {
                                                     Toast.makeText ( ProductDetailActivity.this,
                                                             "You already offered on this product",
-                                                            Toast.LENGTH_SHORT ).show();
+                                                            Toast.LENGTH_SHORT ).show ();
                                                 }
                                             }
                                         } );
                                     }
                                 }
                             } );
-
                         }
                     }
-
                 } );
     }
 
-    private void addOfferToSellerLists() {
+    private void addOfferToProductList(final String offerId) {
+        CollectionReference products = db.collection ( "products" );
+        DocumentReference df = products.document ( product.getProductId () );
+        ArrayList<String> pendingOffers = product.getPendingOffers ();
+        pendingOffers.add ( offerId );
+        df.update ( "pendingOffers", pendingOffers );
+    }
 
+    private void addOfferToSellerList(final String offerId) {
+        CollectionReference users = db.collection ( "users" );
+        final DocumentReference df = users.document ( product.getUserId () );
+        df.get ()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            ArrayList<String> receivedOffers = (ArrayList<String>) document.get ( "receivedOffers" );
+                            receivedOffers.add ( offerId );
+                            df.update ( "receivedOffers", receivedOffers );
+                        }
+                    }
+                } );
     }
 
     private void addOfferToBuyerLists() {
