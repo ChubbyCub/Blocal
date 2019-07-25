@@ -102,19 +102,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch(view.getId ()) {
             case R.id.make_offer_button:
-                FirebaseFirestore db = FirebaseFirestore.getInstance ();
-                db.collection ( "products" ).document (product.getProductId ())
-                        .get()
-                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if(task.isSuccessful ()) {
-                                    DocumentSnapshot document = task.getResult ();
-                                    ArrayList<Offer> pendingOffers = (ArrayList<Offer>) document.get("pendingOffers");
-                                    Offer offer = new Offer();
-                                }
-                            }
-                        } );
+
                 break;
             case R.id.ask_seller_button:
                 break;

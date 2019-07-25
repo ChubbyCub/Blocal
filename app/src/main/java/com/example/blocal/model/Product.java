@@ -3,11 +3,14 @@ package com.example.blocal.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Product implements Parcelable {
@@ -20,8 +23,8 @@ public class Product implements Parcelable {
     private GeoPoint coordinates;
     private String category;
     private String productId;
-    private ArrayList<Offer> pendingOffers;
-    private Offer acceptedOffer;
+    private ArrayList<String> pendingOffers = null;
+
 
     public Product() {
 
@@ -35,7 +38,7 @@ public class Product implements Parcelable {
 
     public Product(String name, double price, String description, String userId,
                    Timestamp dateAdded, String photoURL, String category,
-                   ArrayList<Offer> pendingOffers, Offer acceptedOffer) {
+                   ArrayList<String> pendingOffers) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -44,23 +47,14 @@ public class Product implements Parcelable {
         this.photoURL = photoURL;
         this.category = category;
         this.pendingOffers = pendingOffers;
-        this.acceptedOffer = acceptedOffer;
     }
 
-    public ArrayList<Offer> getPendingOffers() {
+    public List<String> getPendingOffers() {
         return pendingOffers;
     }
 
-    public void setPendingOffers(ArrayList<Offer> pendingOffers) {
+    public void setPendingOffers(ArrayList<String> pendingOffers) {
         this.pendingOffers = pendingOffers;
-    }
-
-    public Offer getAcceptedOffer() {
-        return acceptedOffer;
-    }
-
-    public void setAcceptedOffer(Offer acceptedOffer) {
-        this.acceptedOffer = acceptedOffer;
     }
 
     public String getProductId() {
@@ -149,8 +143,7 @@ public class Product implements Parcelable {
         parcel.writeParcelable ( dateAdded, i );
         parcel.writeString ( photoURL );
         parcel.writeString ( productId );
-        parcel.writeList ( pendingOffers );
-        parcel.writeParcelable ( acceptedOffer, i );
+        parcel.writeStringList ( pendingOffers );
     }
 
     public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product> () {
@@ -172,7 +165,6 @@ public class Product implements Parcelable {
         dateAdded = in.readParcelable ( Timestamp.class.getClassLoader () );
         photoURL = in.readString ();
         productId = in.readString ();
-        pendingOffers = in.readArrayList ( Offer.class.getClassLoader () );
-        acceptedOffer = in.readParcelable ( Offer.class.getClassLoader () );
+        pendingOffers = in.createStringArrayList ();
     }
 }

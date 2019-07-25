@@ -5,14 +5,24 @@ import android.os.Parcelable;
 
 public class Offer implements Parcelable {
     private double price;
+    private String sellerId;
     private String buyerId;
 
     public Offer() {
     }
 
-    public Offer(double price, String buyerId) {
+    public Offer(double price, String buyerId, String sellerId) {
         this.price = price;
         this.buyerId = buyerId;
+        this.sellerId = sellerId;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
     }
 
     public double getPrice() {
