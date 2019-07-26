@@ -81,6 +81,4 @@ public class SellListingRecyclerAdapter extends RecyclerView.Adapter<SellListing
             seeAllOffersButton = itemView.findViewById ( R.id.see_all_offers_btn );
         }
     }
-
-
 }

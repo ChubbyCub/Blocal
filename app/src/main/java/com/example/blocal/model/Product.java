@@ -23,6 +23,7 @@ public class Product implements Parcelable {
     private GeoPoint coordinates;
     private String category;
     private String productId;
+    private boolean sold;
     private ArrayList<String> pendingOffers;
 
 
@@ -37,7 +38,7 @@ public class Product implements Parcelable {
     }
 
     public Product(String name, double price, String description, String userId,
-                   Timestamp dateAdded, String photoURL, String category,
+                   Timestamp dateAdded, String photoURL, String category, boolean sold,
                    ArrayList<String> pendingOffers) {
         this.name = name;
         this.price = price;
@@ -46,8 +47,11 @@ public class Product implements Parcelable {
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
         this.category = category;
+        this.sold = sold;
         this.pendingOffers = pendingOffers;
     }
+
+
 
     public ArrayList<String> getPendingOffers() {
         return pendingOffers;

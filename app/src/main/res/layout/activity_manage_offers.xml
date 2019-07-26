@@ -34,13 +34,16 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/offer_list_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="487dp"
+        android:layout_width="410dp"
+        android:layout_height="284dp"
         android:layout_below="@+id/tool_bar_manage_offers"
-        android:layout_alignParentStart="true">
-
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="-1dp">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -56,5 +59,7 @@
         app:menu="@menu/bottom_navigation_main">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+
 
 </RelativeLayout>
