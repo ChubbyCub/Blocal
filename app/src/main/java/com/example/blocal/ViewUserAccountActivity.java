@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import com.example.blocal.model.Product;
@@ -79,6 +80,14 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                                         product.setProductId ( document.getId());
                                         product.setName ( document.get ( "name" ).toString () );
                                         product.setPhotoURL ( document.get ( "photoURL" ).toString () );
+                                        ArrayList<String> pendingOffers = (ArrayList<String>) document.get("pendingOffers");
+
+                                        // pending offers from the database can be empty here...
+                                        if(pendingOffers == null || pendingOffers.size() == 0) {
+                                            product.setPendingOffers ( new ArrayList<String>() );
+                                        } else {
+                                            product.setPendingOffers ( pendingOffers );
+                                        }
                                         listings.add ( product );
                                     }
                                     Intent intent = new Intent ( getApplicationContext (), ManageTransactionActivity.class );

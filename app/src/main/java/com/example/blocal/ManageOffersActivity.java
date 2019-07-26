@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -20,12 +22,16 @@ import com.example.blocal.model.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
+import ui.ReceivedOffersRecyclerAdapter;
+
 public class ManageOffersActivity extends AppCompatActivity {
     private static final String TAG = "ManageOffersActivity";
     private Product product;
     private ImageView productImage;
     private TextView productName;
-
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,7 @@ public class ManageOffersActivity extends AppCompatActivity {
 
         displayBottomNav ();
         product = getIntent ().getParcelableExtra ( "product" );
+
         Log.d(TAG, product.getName());
 
         productImage = findViewById ( R.id.tool_bar_product_image );
@@ -43,6 +50,17 @@ public class ManageOffersActivity extends AppCompatActivity {
         Picasso.get ().load(product.getPhotoURL ()).fit().centerCrop ().into ( productImage );
         productName.setText(product.getName ());
 
+
+        ArrayList<String> pendingOffers = product.getPendingOffers ();
+
+
+        recyclerView = findViewById ( R.id.offer_list_recycler_view );
+        recyclerView.setHasFixedSize ( true );
+        recyclerView.setLayoutManager ( new LinearLayoutManager ( this) );
+
+        ReceivedOffersRecyclerAdapter mAdapter = new ReceivedOffersRecyclerAdapter ( this, pendingOffers );
+        recyclerView.setAdapter ( mAdapter );
+        mAdapter.notifyDataSetChanged ();
     }
 
     private void displayBottomNav() {

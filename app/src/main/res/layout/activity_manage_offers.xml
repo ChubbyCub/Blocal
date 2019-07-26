@@ -33,7 +33,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tool_bar_recycler_view"
+        android:id="@+id/offer_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="487dp"
         android:layout_below="@+id/tool_bar_manage_offers"

@@ -65,14 +65,8 @@
                 app:cb_color="#99CC00"
                 app:cb_pressedRingWidth="0dip"
                 />
-
-
-
         </GridLayout>
 
-
-
     </androidx.cardview.widget.CardView>
-
 
 </RelativeLayout>
