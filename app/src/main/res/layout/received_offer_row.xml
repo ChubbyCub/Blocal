@@ -57,8 +57,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="0dp"
+                        android:src="@drawable/ic_accept_symbol"
                         android:padding="10dp"
-                        app:cb_color="#99CC00"
+                        app:cb_color="#228B22"
                         app:cb_pressedRingWidth="0dip" />
 
                     <at.markushi.ui.CircleButton
@@ -68,7 +69,8 @@
                         android:layout_alignParentTop="true"
                         android:layout_marginStart="99dp"
                         android:layout_marginTop="0dp"
-                        app:cb_color="#99CC00"
+                        android:src="@drawable/ic_deny_symbol"
+                        app:cb_color="#b50404"
                         app:cb_pressedRingWidth="0dip" />
                 </RelativeLayout>
 
