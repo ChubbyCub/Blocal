@@ -49,7 +49,7 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                         if (task.isSuccessful ()) {
                             DocumentSnapshot document = task.getResult ();
                             String buyerId = document.get ( "buyerId" ).toString ();
-                            holder.offerAmount.setText ( document.get ( "price" ).toString () );
+                            holder.offerAmount.setText ( "$" + document.get ( "price" ).toString () );
                             // query the database to find the matching buyer name
                             DocumentReference buyer = db.collection ( "users" ).document ( buyerId );
                             buyer.get ()

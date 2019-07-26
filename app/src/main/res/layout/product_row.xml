@@ -31,7 +31,10 @@
             android:paddingTop="10dp"
             android:paddingBottom="2dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:ellipsize="end"
+            style="@style/autoscroll"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
