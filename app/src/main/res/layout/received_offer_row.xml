@@ -13,17 +13,16 @@
 
         <GridLayout
             android:layout_margin="10dp"
-            android:columnCount="4"
+            android:columnCount="3"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             >
 
-
             <TextView
                 android:id="@+id/offer_buyer_name"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:textSize="15sp"
@@ -31,11 +30,11 @@
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Buyer Name" />
+                />
 
             <TextView
                 android:id="@+id/offer_amount_list"
-                android:layout_width="wrap_content"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
                 android:textSize="15sp"
@@ -43,28 +42,36 @@
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Dollar Amount" />
-
-            <at.markushi.ui.CircleButton
-                android:layout_column="2"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-
-                android:layout_marginStart="70dp"
-                android:layout_gravity="end"
-                app:cb_color="#99CC00"
-                app:cb_pressedRingWidth="0dip"
                 />
 
-            <at.markushi.ui.CircleButton
-                android:layout_column="3"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                <RelativeLayout
+                    android:layout_margin="10dp"
+                    android:layout_column="2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                android:layout_gravity="end"
-                app:cb_color="#99CC00"
-                app:cb_pressedRingWidth="0dip"
-                />
+                    <at.markushi.ui.CircleButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="0dp"
+                        android:padding="10dp"
+                        app:cb_color="#99CC00"
+                        app:cb_pressedRingWidth="0dip" />
+
+                    <at.markushi.ui.CircleButton
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="99dp"
+                        android:layout_marginTop="0dp"
+                        app:cb_color="#99CC00"
+                        app:cb_pressedRingWidth="0dip" />
+                </RelativeLayout>
+
         </GridLayout>
 
     </androidx.cardview.widget.CardView>
