@@ -242,6 +242,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         CollectionReference products = db.collection ( "products" );
         DocumentReference df = products.document ( product.getProductId () );
         ArrayList<String> pendingOffers = product.getPendingOffers ();
+
+        if(pendingOffers == null || pendingOffers.size() == 0) {
+            pendingOffers = new ArrayList<String>();
+        }
+
         pendingOffers.add ( offerId );
         df.update ( "pendingOffers", pendingOffers );
     }
