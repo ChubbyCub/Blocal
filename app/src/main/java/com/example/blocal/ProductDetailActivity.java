@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -39,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import com.example.blocal.model.Offer;
 import com.example.blocal.model.Product;
@@ -124,12 +126,15 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         switch (view.getId ()) {
             case R.id.make_offer_button:
                 if (currentUserId.equals ( product.getUserId () )) {
-                    Toast.makeText ( getApplicationContext (), "Cannot make an offer on your own product", Toast.LENGTH_SHORT ).show ();
+                    Toast.makeText ( getApplicationContext (), "Cannot make an offer on your own product",
+                            Toast.LENGTH_SHORT ).show ();
                 } else {
                     LayoutInflater li = LayoutInflater.from ( getApplicationContext () );
                     View promptView = li.inflate ( R.layout.offer_prompt, (ViewGroup) null );
 
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder ( ProductDetailActivity.this, R.style.MyDialogTheme );
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder (
+                            ProductDetailActivity.this,
+                            R.style.MyDialogTheme );
 
                     alertDialogBuilder.setView ( promptView );
 
@@ -179,7 +184,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     price,
                                     currentUserId,
                                     product.getUserId (),
-                                    product.getProductId () );
+                                    product.getProductId (),
+                                    new Timestamp ( new Date() ),
+                                    new Timestamp (new Date()),
+                                    "pending",
+                                    false
+                            );
 
                             final Query query = offers.whereEqualTo ( "buyerId", currentUserId );
 
@@ -191,7 +201,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 addOfferToProductList ( documentReference.getId () );
-                                                addOfferToSellerList ( documentReference.getId () );
                                                 addOfferToBuyerList ( documentReference.getId () );
                                                 Toast.makeText ( getApplicationContext (),
                                                         "Successfully made an offer",
@@ -208,12 +217,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                                         @Override
                                                         public void onSuccess(DocumentReference documentReference) {
                                                             addOfferToProductList ( documentReference.getId () );
-                                                            addOfferToSellerList ( documentReference.getId () );
                                                             addOfferToBuyerList ( documentReference.getId () );
                                                             Toast.makeText ( getApplicationContext (),
                                                                     "Successfully made an offer",
                                                                     Toast.LENGTH_SHORT ).show ();
-
                                                         }
                                                     } );
                                                 } else {
@@ -239,22 +246,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         df.update ( "pendingOffers", pendingOffers );
     }
 
-    private void addOfferToSellerList(final String offerId) {
-        CollectionReference users = db.collection ( "users" );
-        final DocumentReference df = users.document ( product.getUserId () );
-        df.get ()
-                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful ()) {
-                            DocumentSnapshot document = task.getResult ();
-                            ArrayList<String> receivedOffers = (ArrayList<String>) document.get ( "receivedOffers" );
-                            receivedOffers.add ( offerId );
-                            df.update ( "receivedOffers", receivedOffers );
-                        }
-                    }
-                } );
-    }
 
     private void addOfferToBuyerList(final String offerId) {
         CollectionReference users = db.collection ( "users" );

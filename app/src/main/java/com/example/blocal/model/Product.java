@@ -23,7 +23,7 @@ public class Product implements Parcelable {
     private GeoPoint coordinates;
     private String category;
     private String productId;
-    private boolean sold;
+    private boolean isSold;
     private ArrayList<String> pendingOffers;
 
 
@@ -38,7 +38,7 @@ public class Product implements Parcelable {
     }
 
     public Product(String name, double price, String description, String userId,
-                   Timestamp dateAdded, String photoURL, String category, boolean sold,
+                   Timestamp dateAdded, String photoURL, String category, boolean isSold,
                    ArrayList<String> pendingOffers) {
         this.name = name;
         this.price = price;
@@ -47,11 +47,17 @@ public class Product implements Parcelable {
         this.dateAdded = dateAdded;
         this.photoURL = photoURL;
         this.category = category;
-        this.sold = sold;
+        this.isSold = isSold;
         this.pendingOffers = pendingOffers;
     }
 
+    public boolean isSold() {
+        return isSold;
+    }
 
+    public void setSold(boolean sold) {
+        isSold = sold;
+    }
 
     public ArrayList<String> getPendingOffers() {
         return pendingOffers;
@@ -147,6 +153,7 @@ public class Product implements Parcelable {
         parcel.writeParcelable ( dateAdded, i );
         parcel.writeString ( photoURL );
         parcel.writeString ( productId );
+        parcel.writeByte ((byte) (isSold ? 1 : 0 ));
         parcel.writeStringList ( pendingOffers );
     }
 
@@ -169,6 +176,7 @@ public class Product implements Parcelable {
         dateAdded = in.readParcelable ( Timestamp.class.getClassLoader () );
         photoURL = in.readString ();
         productId = in.readString ();
+        isSold = in.readByte() != 0;
         pendingOffers = in.createStringArrayList ();
     }
 }

@@ -30,7 +30,6 @@ public class BuyTransaction extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
     private String currentUserId;
-    private TableLayout tableLayout;
 
     
     @Nullable
@@ -41,52 +40,12 @@ public class BuyTransaction extends Fragment {
         DocumentReference df = db.collection("users").document (currentUserId);
         final CollectionReference offers = db.collection("offers");
 
-        tableLayout = getActivity ().findViewById ( R.id.sent_offer_table );
+
 
         // query the list of offer sent
-        df.get()
-                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful ()) {
-                            DocumentSnapshot document = task.getResult ();
-                            ArrayList<String> sentOffers = (ArrayList<String>) document.get("sentOffers");
-                            if(sentOffers.size() == 0 || sentOffers == null) {
-                                return;
-                            } else {
-                                for(String id : sentOffers) {
-                                    offers.document (id).get()
-                                    .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if(task.isSuccessful ()) {
-                                                DocumentSnapshot document = task.getResult ();
-                                                String productId = document.get("productId").toString ();
-                                            }
-                                        }
-                                    } );
-                                }
 
-
-                                // loop thru the sent offer array, query out the following info:
-                                // 1. product id => from here... need to fetch the product info
-                                // 2. offer price
-                                // 3. status --> add status // how to know the status? check to see if the status is part of the accepted of rejected array
-                                // if it belongs to neither, that means, the status is pending.
-                                // if it belongs to accepted, then put status as accepted
-                                // if it belongs to rejected, then put status as rejected
-                            }
-                        }
-                    }
-                } );
-
-        // send the list to the adapter
 
         return view;
-    }
-
-    private void queryProductInfo(final String productId) {
-        db.collection ( "products" );
     }
 
     @Override
