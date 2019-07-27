@@ -71,7 +71,7 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
 
-                final Intent intent = new Intent ( getApplicationContext (), ManageTransactionActivity.class );
+                final Intent intent = new Intent ( ViewUserAccountActivity.this, ManageTransactionActivity.class );
                 final Bundle myBundle = new Bundle ();
                 // query the pending offers on producs collection
                 Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );

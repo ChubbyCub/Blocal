@@ -33,8 +33,9 @@ public class ManageTransactionActivity extends AppCompatActivity {
         setContentView ( R.layout.activity_manage_transaction );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        listings = getIntent ().getParcelableArrayListExtra ( "listings" );
-        sentOffers = getIntent().getStringArrayListExtra ( "sentOffers" );
+        Bundle extras = this.getIntent().getExtras ();
+        listings =  extras.getParcelableArrayList ( "listings" );
+        sentOffers = extras.getStringArrayList ( "sentOffers" );
 
         sellTransactionFragment = new SellTransaction ();
         buyTransactionFragment = new BuyTransaction ();
