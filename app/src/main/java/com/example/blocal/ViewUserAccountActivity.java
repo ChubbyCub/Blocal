@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -68,6 +70,10 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         final ArrayList<Product> listings = new ArrayList<> ();
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
+
+                final Intent intent = new Intent ( getApplicationContext (), ManageTransactionActivity.class );
+                final Bundle myBundle = new Bundle ();
+                // query the pending offers on producs collection
                 Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
                 query.get ()
                         .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
@@ -77,24 +83,42 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
                                     QuerySnapshot qs = task.getResult ();
                                     for (QueryDocumentSnapshot document : qs) {
                                         Product product = new Product ();
-                                        product.setProductId ( document.getId());
+                                        product.setProductId ( document.getId () );
                                         product.setName ( document.get ( "name" ).toString () );
                                         product.setPhotoURL ( document.get ( "photoURL" ).toString () );
-                                        ArrayList<String> pendingOffers = (ArrayList<String>) document.get("pendingOffers");
+                                        ArrayList<String> pendingOffers = (ArrayList<String>) document.get ( "pendingOffers" );
 
                                         // pending offers from the database can be empty here...
-                                        if(pendingOffers == null || pendingOffers.size() == 0) {
-                                            product.setPendingOffers ( new ArrayList<String>() );
+                                        if (pendingOffers == null || pendingOffers.size () == 0) {
+                                            product.setPendingOffers ( new ArrayList<String> () );
                                         } else {
                                             product.setPendingOffers ( pendingOffers );
                                         }
                                         listings.add ( product );
                                     }
-                                    Intent intent = new Intent ( getApplicationContext (), ManageTransactionActivity.class );
-                                    intent.putParcelableArrayListExtra ( "listings", listings );
-                                    startActivity ( intent );
+                                    myBundle.putParcelableArrayList ( "listings", listings );
                                 } else {
                                     Log.e ( TAG, task.getException ().getMessage () );
+                                }
+                            }
+                        } );
+
+                // query sent offers list
+                DocumentReference df = db.collection ( "users" ).document ( currentUserId );
+                df.get ()
+                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful ()) {
+                                    DocumentSnapshot document = task.getResult ();
+                                    ArrayList<String> sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
+
+                                    if (sentOffers == null || sentOffers.size () == 0) {
+                                        sentOffers = new ArrayList<> ();
+                                    }
+                                    myBundle.putStringArrayList ( "sentOffers", sentOffers );
+                                    intent.putExtras(myBundle);
+                                    startActivity(intent);
                                 }
                             }
                         } );
@@ -111,7 +135,6 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
     @Override
     protected void onStart() {
-
         super.onStart ();
         firebaseAuth = FirebaseAuth.getInstance ();
         user = firebaseAuth.getCurrentUser ();

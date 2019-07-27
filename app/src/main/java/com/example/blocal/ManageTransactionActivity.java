@@ -25,6 +25,7 @@ public class ManageTransactionActivity extends AppCompatActivity {
     private BuyTransaction buyTransactionFragment;
     private ViewPager mViewPager;
     private ArrayList<Product> listings;
+    private ArrayList<String> sentOffers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class ManageTransactionActivity extends AppCompatActivity {
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
         listings = getIntent ().getParcelableArrayListExtra ( "listings" );
-
+        sentOffers = getIntent().getStringArrayListExtra ( "sentOffers" );
 
         sellTransactionFragment = new SellTransaction ();
         buyTransactionFragment = new BuyTransaction ();
@@ -51,8 +52,8 @@ public class ManageTransactionActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         SectionPageAdapter adapter = new SectionPageAdapter ( getSupportFragmentManager () );
-        adapter.addFragment ( sellTransactionFragment, "Sell" );
-        adapter.addFragment ( buyTransactionFragment, "Buy" );
+        adapter.addFragment ( sellTransactionFragment, "Received" );
+        adapter.addFragment ( buyTransactionFragment, "Sent" );
         viewPager.setAdapter ( adapter );
     }
 
@@ -60,6 +61,10 @@ public class ManageTransactionActivity extends AppCompatActivity {
         Bundle mBundle = new Bundle ();
         mBundle.putParcelableArrayList ( "listings", listings );
         sellTransactionFragment.setArguments ( mBundle );
+
+        Bundle anotherBundle = new Bundle();
+        anotherBundle.putStringArrayList ( "sentOffers", sentOffers );
+        buyTransactionFragment.setArguments ( anotherBundle );
     }
 
 

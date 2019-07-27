@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="10dp"
+        android:columnCount="3"
+        android:gravity="center_horizontal"
+        android:rowCount="1">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/sent_offer_product_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:padding="0dp"
+            android:src="@drawable/ic_image_placeholder" />
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="left|center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="20dp">
+
+            <TextView
+                android:id="@+id/sent_offer_product_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Product Name"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/sent_offer_my_offer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My offer"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/sent_offer_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="2"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_image_placeholder" />
+    </GridLayout>
+
+</RelativeLayout>
