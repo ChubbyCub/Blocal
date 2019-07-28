@@ -1,6 +1,7 @@
 package ui;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.util.List;
 import at.markushi.ui.CircleButton;
 
 public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<ReceivedOffersRecyclerAdapter.ViewHolder> {
+    private static final String TAG = "ReceivedOffersRecyclerAdapter";
     private Context context;
     private List<String> receivedOffers;
 
@@ -69,11 +71,14 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                                 holder.rejectButton.setVisibility ( View.VISIBLE );
                             }
 
+                            // this list view did not get called again... that's why it never looked back here
                             if (status.equals ( "accepted" )) {
+                                Log.d(TAG, "does it go in here?");
                                 holder.rejectButton.setVisibility ( View.INVISIBLE );
                             }
 
                             if (status.equals ( "rejected" )) {
+                                Log.d(TAG, "does it go in here?");
                                 holder.acceptButton.setVisibility ( View.INVISIBLE );
                             }
 
@@ -97,6 +102,8 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
         handleAcceptOffer ( holder, df, offerId, offers );
         handleRejectOffer ( holder, df );
     }
+
+
 
     private void handleAcceptOffer(@NonNull final ViewHolder holder,
                                    final DocumentReference df,

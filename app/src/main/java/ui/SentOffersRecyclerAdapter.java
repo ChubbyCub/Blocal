@@ -59,7 +59,7 @@ public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRe
                             }
 
                             if(status.equals("accepted")) {
-                                holder.status.setImageResource ( R.drawable.ic_accept_symbol );
+                                holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
                             }
 
                             if(status.equals("rejected")) {

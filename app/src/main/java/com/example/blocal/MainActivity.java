@@ -147,6 +147,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if (!queryDocumentSnapshots.isEmpty ()) {
                             for (QueryDocumentSnapshot productDocument : queryDocumentSnapshots) {
+                                if(productDocument.get("sold").toString ().equals("true") ) {
+                                    continue;
+                                }
+
                                 Product product = productDocument.toObject ( Product.class );
 
                                 // set an id here to be able to retrieve the product later when
