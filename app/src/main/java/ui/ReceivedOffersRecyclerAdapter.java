@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Time;
 import java.util.Date;
 import java.util.List;
 
@@ -94,9 +95,7 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                 } );
 
         handleAcceptOffer ( holder, df, offerId, offers );
-
-        handleRejectOffer ( holder, df, offerId, offers );
-
+        handleRejectOffer ( holder, df );
     }
 
     private void handleAcceptOffer(@NonNull final ViewHolder holder,
@@ -108,15 +107,15 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
             public void onClick(View view) {
                 // update status of the existing offer
                 df.update ( "status", "accepted" );
-                df.update("dateUpdated", new Timestamp ( new Date () ) );
-                df.update("productState", true);
+                df.update ( "dateUpdated", new Timestamp ( new Date () ) );
+                df.update ( "productState", true );
 
                 // query the offers collection
-                for(String id : receivedOffers) {
-                    if(offerId.equals(id)) {
+                for (String id : receivedOffers) {
+                    if (offerId.equals ( id )) {
                         continue;
                     }
-                    offers.document (id).update ( "status", "rejected" );
+                    offers.document ( id ).update ( "status", "rejected" );
                 }
                 queryProduct ( df );
             }
@@ -124,29 +123,27 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
     }
 
     private void queryProduct(final DocumentReference df) {
-        df.get()
+        df.get ()
                 .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful ()) {
+                        if (task.isSuccessful ()) {
                             DocumentSnapshot document = task.getResult ();
-                            String productId = document.get("productId").toString ();
+                            String productId = document.get ( "productId" ).toString ();
                             FirebaseFirestore db = FirebaseFirestore.getInstance ();
-                            DocumentReference soldProduct = db.collection ( "products" ).document (productId);
+                            DocumentReference soldProduct = db.collection ( "products" ).document ( productId );
                             soldProduct.update ( "sold", true );
                         }
                     }
                 } );
     }
 
-    private void handleRejectOffer(@NonNull final ViewHolder holder,
-                                   final DocumentReference df,
-                                   final String offerId,
-                                   final CollectionReference offers) {
+    private void handleRejectOffer(@NonNull final ViewHolder holder, final DocumentReference df) {
         holder.rejectButton.setOnClickListener ( new View.OnClickListener () {
             @Override
             public void onClick(View view) {
-
+                df.update ( "status", "rejected" );
+                df.update ( "dateUpdated", new Timestamp ( new Date () ) );
             }
         } );
     }

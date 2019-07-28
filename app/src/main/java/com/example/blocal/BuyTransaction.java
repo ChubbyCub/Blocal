@@ -35,46 +35,45 @@ public class BuyTransaction extends Fragment {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
     private String currentUserId;
-    private ArrayList<String> sentOffers;
+    private ArrayList<String> sentOffers = new ArrayList<> ();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate ( R.layout.fragment_buy_transaction, container, false );
-
-        Bundle extras = getActivity().getIntent().getExtras ();
-        sentOffers = extras.getStringArrayList ( "sentOffers" );
+        final View view = inflater.inflate ( R.layout.fragment_buy_transaction, container, false );
 
 
-        final RecyclerView mRecyclerView = view.findViewById ( R.id.buy_listing_recycler_view );
-        mRecyclerView.setHasFixedSize ( true );
-        mRecyclerView.setLayoutManager ( new LinearLayoutManager (getActivity ()));
+        db = FirebaseFirestore.getInstance ();
+        DocumentReference df = db.collection("users").document (currentUserId);
+        df.get()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            sentOffers = (ArrayList<String>) document.get("sentOffers");
+                            if(sentOffers.size() == 0 || sentOffers == null) {
+                                sentOffers = new ArrayList<>();
+                            }
+                            RecyclerView mRecyclerView = view.findViewById ( R.id.buy_listing_recycler_view );
+                            mRecyclerView.setHasFixedSize ( true );
+                            mRecyclerView.setLayoutManager ( new LinearLayoutManager (getActivity ()));
 
-        SentOffersRecyclerAdapter mAdapter = new SentOffersRecyclerAdapter ( getActivity (), sentOffers);
-        mRecyclerView.setAdapter ( mAdapter );
-        mAdapter.notifyDataSetChanged ();
-
-//        db = FirebaseFirestore.getInstance ();
-//        DocumentReference df = db.collection("users").document (currentUserId);
-//        df.get()
-//                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if(task.isSuccessful ()) {
-//                            DocumentSnapshot document = task.getResult ();
-//                            ArrayList<String> sentOffers = (ArrayList<String>)document.get("sentOffers");
-//
-//                            if(sentOffers.size() == 0 || sentOffers == null) {
-//                                sentOffers = new ArrayList<>();
-//                            } else {
-//
-//                            }
-//
-//                        }
-//                    }
-//                } );
+                            SentOffersRecyclerAdapter mAdapter = new SentOffersRecyclerAdapter ( getActivity (), sentOffers);
+                            mRecyclerView.setAdapter ( mAdapter );
+                            mAdapter.notifyDataSetChanged ();
+                        }
+                    }
+                } );
 
         return view;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate ( savedInstanceState );
+
+
     }
 
     @Override

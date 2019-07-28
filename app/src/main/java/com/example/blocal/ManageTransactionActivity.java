@@ -24,18 +24,12 @@ public class ManageTransactionActivity extends AppCompatActivity {
     private SellTransaction sellTransactionFragment;
     private BuyTransaction buyTransactionFragment;
     private ViewPager mViewPager;
-    private ArrayList<Product> listings;
-    private ArrayList<String> sentOffers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_manage_transaction );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
-
-        Bundle extras = this.getIntent().getExtras ();
-        listings =  extras.getParcelableArrayList ( "listings" );
-        sentOffers = extras.getStringArrayList ( "sentOffers" );
 
         sellTransactionFragment = new SellTransaction ();
         buyTransactionFragment = new BuyTransaction ();
@@ -46,8 +40,6 @@ public class ManageTransactionActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById ( R.id.tabs );
         tabLayout.setupWithViewPager ( mViewPager );
 
-        sendDataToFragment ();
-
         displayBottomNav ();
     }
 
@@ -57,17 +49,6 @@ public class ManageTransactionActivity extends AppCompatActivity {
         adapter.addFragment ( buyTransactionFragment, "Sent" );
         viewPager.setAdapter ( adapter );
     }
-
-    private void sendDataToFragment() {
-        Bundle mBundle = new Bundle ();
-        mBundle.putParcelableArrayList ( "listings", listings );
-        sellTransactionFragment.setArguments ( mBundle );
-
-        Bundle anotherBundle = new Bundle();
-        anotherBundle.putStringArrayList ( "sentOffers", sentOffers );
-        buyTransactionFragment.setArguments ( anotherBundle );
-    }
-
 
     private void displayBottomNav() {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById ( R.id.bottom_navigation );

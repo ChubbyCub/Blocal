@@ -67,61 +67,10 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onClick(View view) {
-        final ArrayList<Product> listings = new ArrayList<> ();
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
-
-                final Intent intent = new Intent ( ViewUserAccountActivity.this, ManageTransactionActivity.class );
-                final Bundle myBundle = new Bundle ();
-                // query the pending offers on producs collection
-                Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
-                query.get ()
-                        .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful ()) {
-                                    QuerySnapshot qs = task.getResult ();
-                                    for (QueryDocumentSnapshot document : qs) {
-                                        Product product = new Product ();
-                                        product.setProductId ( document.getId () );
-                                        product.setName ( document.get ( "name" ).toString () );
-                                        product.setPhotoURL ( document.get ( "photoURL" ).toString () );
-                                        ArrayList<String> pendingOffers = (ArrayList<String>) document.get ( "pendingOffers" );
-
-                                        // pending offers from the database can be empty here...
-                                        if (pendingOffers == null || pendingOffers.size () == 0) {
-                                            product.setPendingOffers ( new ArrayList<String> () );
-                                        } else {
-                                            product.setPendingOffers ( pendingOffers );
-                                        }
-                                        listings.add ( product );
-                                    }
-                                    myBundle.putParcelableArrayList ( "listings", listings );
-                                } else {
-                                    Log.e ( TAG, task.getException ().getMessage () );
-                                }
-                            }
-                        } );
-
-                // query sent offers list
-                DocumentReference df = db.collection ( "users" ).document ( currentUserId );
-                df.get ()
-                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful ()) {
-                                    DocumentSnapshot document = task.getResult ();
-                                    ArrayList<String> sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
-
-                                    if (sentOffers == null || sentOffers.size () == 0) {
-                                        sentOffers = new ArrayList<> ();
-                                    }
-                                    myBundle.putStringArrayList ( "sentOffers", sentOffers );
-                                    intent.putExtras(myBundle);
-                                    startActivity(intent);
-                                }
-                            }
-                        } );
+                Intent intent = new Intent ( ViewUserAccountActivity.this, ManageTransactionActivity.class );
+                startActivity(intent);
                 break;
             case R.id.edit_profile_btn:
                 break;
