@@ -258,7 +258,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         ArrayList<String> pendingOffers = product.getPendingOffers ();
 
         if (pendingOffers == null || pendingOffers.size () == 0) {
-            pendingOffers = new ArrayList<String> ();
+            pendingOffers = new ArrayList<> ();
         }
 
         pendingOffers.add ( offerId );
@@ -297,7 +297,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
         GeoPoint currLoc = product.getCoordinates ();
         LatLng latLng = new LatLng ( currLoc.getLatitude (), currLoc.getLongitude () );
-        // mMap.addMarker ( new MarkerOptions ().position ( latLng ).title ( "Item location" ) );
         mMap.moveCamera ( CameraUpdateFactory.newLatLng ( latLng ) );
         mMap.animateCamera ( CameraUpdateFactory.zoomTo(17.0f) );
     }

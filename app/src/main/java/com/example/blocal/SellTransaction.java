@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 import com.example.blocal.model.Product;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -60,6 +61,7 @@ public class SellTransaction extends Fragment {
                                 product.setProductId ( document.getId () );
                                 product.setName ( document.get ( "name" ).toString () );
                                 product.setPhotoURL ( document.get ( "photoURL" ).toString () );
+                                product.setCoordinates ( (GeoPoint) document.get("coordinates") );
                                 ArrayList<String> pendingOffers = (ArrayList<String>) document.get ( "pendingOffers" );
 
                                 // pending offers from the database can be empty here...
