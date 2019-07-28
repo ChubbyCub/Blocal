@@ -66,19 +66,16 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                             // set visibility of accept and deny button
                             String status = document.get ( "status" ).toString ();
 
-                            if (status.equals ( "pending" )) {
-                                holder.acceptButton.setVisibility ( View.VISIBLE );
-                                holder.rejectButton.setVisibility ( View.VISIBLE );
-                            }
-
                             // this list view did not get called again... that's why it never looked back here
                             if (status.equals ( "accepted" )) {
                                 Log.d(TAG, "does it go in here?");
+                                holder.acceptButton.setVisibility ( View.VISIBLE );
                                 holder.rejectButton.setVisibility ( View.INVISIBLE );
                             }
 
                             if (status.equals ( "rejected" )) {
                                 Log.d(TAG, "does it go in here?");
+                                holder.rejectButton.setVisibility ( View.VISIBLE );
                                 holder.acceptButton.setVisibility ( View.INVISIBLE );
                             }
 
