@@ -13,9 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.blocal.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -43,57 +46,53 @@ public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRe
 
         // query the database to find the matching price
         final FirebaseFirestore db = FirebaseFirestore.getInstance ();
-        DocumentReference df = db.collection ( "offers" ).document ( offerId );
-        df.get ()
-                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+        Query query = db.collection ( "offers" ).orderBy ( "dateUpdated", Query.Direction.ASCENDING );
+        query.get ()
+                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful ()) {
-                            DocumentSnapshot document = task.getResult ();
+                            QuerySnapshot qs = task.getResult ();
+                            List<DocumentSnapshot> list = qs.getDocuments ();
 
-                            holder.myOffer.setText("My offer: " + document.get("price").toString ());
+                            for (DocumentSnapshot document : list) {
+                                if (!document.getId ().equals ( offerId )) {
+                                    continue;
+                                }
 
-                            String status = document.get("status").toString ();
-                            if(status.equals("pending")) {
-                                holder.status.setImageResource ( R.drawable.ic_pending_status );
-                            }
+                                holder.myOffer.setText ( "My offer: " + document.get ( "price" ).toString () );
 
-                            if(status.equals("accepted")) {
-                                holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
-                            }
+                                String status = document.get ( "status" ).toString ();
+                                if (status.equals ( "pending" )) {
+                                    holder.status.setImageResource ( R.drawable.ic_pending_status );
+                                }
 
-                            if(status.equals("rejected")) {
-                                holder.status.setImageResource ( R.drawable.ic_deny_symbol );
-                            }
+                                if (status.equals ( "accepted" )) {
+                                    holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
+                                }
 
-                            String productId = document.get ( "productId" ).toString ();
-                            DocumentReference product = db.collection ( "products" ).document ( productId );
-                            product.get ()
-                                    .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful ()) {
-                                                DocumentSnapshot document = task.getResult ();
-                                                Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
-                                                        .centerCrop ().into ( holder.productImage );
-                                                holder.productName.setText ( document.get ( "name" ).toString () );
+                                if (status.equals ( "rejected" )) {
+                                    holder.status.setImageResource ( R.drawable.ic_deny_symbol );
+                                }
+
+                                String productId = document.get ( "productId" ).toString ();
+                                DocumentReference product = db.collection ( "products" ).document ( productId );
+                                product.get ()
+                                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful ()) {
+                                                    DocumentSnapshot document = task.getResult ();
+                                                    Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
+                                                            .centerCrop ().into ( holder.productImage );
+                                                    holder.productName.setText ( document.get ( "name" ).toString () );
+                                                }
                                             }
-                                        }
-                                    } );
+                                        } );
+                            }
                         }
                     }
                 } );
-
-//        holder.itemView.setOnClickListener ( new View.OnClickListener () {
-//            @Override
-//            public void onClick(View view) {
-//                Log.i ( "Product card: ", "is clicked" );
-//                Intent intent = new Intent ( context, ProductDetailActivity.class ).putExtra ( "product", product );
-//                intent.setExtrasClassLoader ( Offer.class.getClassLoader () );
-//                context.startActivity ( intent );
-//            }
-//        } );
-
     }
 
 
