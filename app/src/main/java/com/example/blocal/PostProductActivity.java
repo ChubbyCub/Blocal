@@ -276,7 +276,6 @@ public class PostProductActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         chosenCategory = adapterView.getItemAtPosition ( i ).toString ();
-        Toast.makeText ( this, "Selected: " + chosenCategory, Toast.LENGTH_SHORT ).show ();
     }
 
     @Override

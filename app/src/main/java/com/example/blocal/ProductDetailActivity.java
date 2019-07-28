@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -19,6 +21,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,6 +40,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -47,7 +56,7 @@ import com.example.blocal.model.Product;
 
 import javax.annotation.Nullable;
 
-public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
     private TextView productName;
     private TextView productTimestamp;
     private TextView productDescription;
@@ -61,6 +70,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     private FirebaseAuth firebaseAuth;
     private FirebaseUser user;
     private String currentUserId;
+
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +104,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
         String photoURL = product.getPhotoURL ();
         Picasso.get ().load ( photoURL ).fit ().centerCrop ().into ( productImage );
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager ().findFragmentById ( R.id.map );
+        mapFragment.getMapAsync ( this );
     }
 
     private void setUserName(String userId) {
@@ -185,8 +199,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     currentUserId,
                                     product.getUserId (),
                                     product.getProductId (),
-                                    new Timestamp ( new Date() ),
-                                    new Timestamp (new Date()),
+                                    new Timestamp ( new Date () ),
+                                    new Timestamp ( new Date () ),
                                     "pending",
                                     false
                             );
@@ -243,8 +257,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         DocumentReference df = products.document ( product.getProductId () );
         ArrayList<String> pendingOffers = product.getPendingOffers ();
 
-        if(pendingOffers == null || pendingOffers.size() == 0) {
-            pendingOffers = new ArrayList<String>();
+        if (pendingOffers == null || pendingOffers.size () == 0) {
+            pendingOffers = new ArrayList<String> ();
         }
 
         pendingOffers.add ( offerId );
@@ -275,5 +289,16 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         firebaseAuth = FirebaseAuth.getInstance ();
         user = firebaseAuth.getCurrentUser ();
         currentUserId = user.getUid ();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        GeoPoint currLoc = product.getCoordinates ();
+        LatLng latLng = new LatLng ( currLoc.getLatitude (), currLoc.getLongitude () );
+        // mMap.addMarker ( new MarkerOptions ().position ( latLng ).title ( "Item location" ) );
+        mMap.moveCamera ( CameraUpdateFactory.newLatLng ( latLng ) );
+        mMap.animateCamera ( CameraUpdateFactory.zoomTo(17.0f) );
     }
 }

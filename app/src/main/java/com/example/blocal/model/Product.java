@@ -152,6 +152,8 @@ public class Product implements Parcelable {
         parcel.writeString ( userId );
         parcel.writeParcelable ( dateAdded, i );
         parcel.writeString ( photoURL );
+        parcel.writeDouble(coordinates.getLatitude ());
+        parcel.writeDouble(coordinates.getLongitude ());
         parcel.writeString ( productId );
         parcel.writeByte ((byte) (isSold ? 1 : 0 ));
         parcel.writeStringList ( pendingOffers );
@@ -175,6 +177,9 @@ public class Product implements Parcelable {
         userId = in.readString ();
         dateAdded = in.readParcelable ( Timestamp.class.getClassLoader () );
         photoURL = in.readString ();
+        Double lat = in.readDouble();
+        Double lng = in.readDouble();
+        coordinates = new GeoPoint ( lat, lng );
         productId = in.readString ();
         isSold = in.readByte() != 0;
         pendingOffers = in.createStringArrayList ();
