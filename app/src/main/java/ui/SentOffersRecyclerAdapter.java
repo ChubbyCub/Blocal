@@ -1,6 +1,7 @@
 package ui;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRecyclerAdapter.ViewHolder> {
     private Context context;
@@ -47,54 +53,54 @@ public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRe
 
         // query the database to find the matching price
         final FirebaseFirestore db = FirebaseFirestore.getInstance ();
-        Query query = db.collection ( "offers" ).orderBy ( "dateUpdated", Query.Direction.ASCENDING );
-        query.get ()
-                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful ()) {
-                            QuerySnapshot qs = task.getResult ();
-                            List<DocumentSnapshot> list = qs.getDocuments ();
+        Query query = db.collection ( "offers" ).orderBy ( "dateUpdated", Query.Direction.DESCENDING );
+        query.addSnapshotListener ( new EventListener<QuerySnapshot> () {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if(e != null) {
+                    Log.e("ERROR:", e.getMessage ());
+                }
 
-                            for (DocumentSnapshot document : list) {
-                                if (!document.getId ().equals ( offerId )) {
-                                    continue;
-                                }
-
-                                NumberFormat format = NumberFormat.getCurrencyInstance ();
-                                holder.myOffer.setText ("My offer: " + format.format ( document.get ( "price" ) ) );
-
-                                String status = document.get ( "status" ).toString ();
-                                if (status.equals ( "pending" )) {
-                                    holder.status.setImageResource ( R.drawable.ic_pending_status );
-                                }
-
-                                if (status.equals ( "accepted" )) {
-                                    holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
-                                }
-
-                                if (status.equals ( "rejected" )) {
-                                    holder.status.setImageResource ( R.drawable.ic_deny_symbol );
-                                }
-
-                                String productId = document.get ( "productId" ).toString ();
-                                DocumentReference product = db.collection ( "products" ).document ( productId );
-                                product.get ()
-                                        .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful ()) {
-                                                    DocumentSnapshot document = task.getResult ();
-                                                    Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
-                                                            .centerCrop ().into ( holder.productImage );
-                                                    holder.productName.setText ( document.get ( "name" ).toString () );
-                                                }
-                                            }
-                                        } );
-                            }
+                if(queryDocumentSnapshots != null) {
+                    for(QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        if(!documentSnapshot.getId().equals(offerId)) {
+                            continue;
                         }
+
+                        NumberFormat format = NumberFormat.getCurrencyInstance ();
+                        holder.myOffer.setText ("My offer: " + format.format ( documentSnapshot.get ( "price" ) ) );
+
+                        String status = documentSnapshot.get ( "status" ).toString ();
+                        if (status.equals ( "pending" )) {
+                            holder.status.setImageResource ( R.drawable.ic_pending_status );
+                        }
+
+                        if (status.equals ( "accepted" )) {
+                            holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
+                        }
+
+                        if (status.equals ( "rejected" )) {
+                            holder.status.setImageResource ( R.drawable.ic_deny_symbol );
+                        }
+
+                        String productId = documentSnapshot.get ( "productId" ).toString ();
+                        DocumentReference product = db.collection ( "products" ).document ( productId );
+                        product.get ()
+                                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful ()) {
+                                            DocumentSnapshot document = task.getResult ();
+                                            Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
+                                                    .centerCrop ().into ( holder.productImage );
+                                            holder.productName.setText ( document.get ( "name" ).toString () );
+                                        }
+                                    }
+                                } );
                     }
-                } );
+                }
+            }
+        } );
     }
 
 
