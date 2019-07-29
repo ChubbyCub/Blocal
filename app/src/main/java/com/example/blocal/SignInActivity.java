@@ -65,7 +65,7 @@ public class SignInActivity extends AppCompatActivity {
                                 new AuthUI.IdpConfig.FacebookBuilder ().build (),
                                 new AuthUI.IdpConfig.GoogleBuilder ().build ()
                         ) )
-                        .setLogo ( R.drawable.bart )
+                        .setLogo ( R.drawable.blocal )
                         .setTheme ( R.style.MyTheme )
                         .build (), FIREBASE_LOGIN_CODE
         );
