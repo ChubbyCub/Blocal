@@ -31,12 +31,16 @@ import java.util.ArrayList;
 
 import com.example.blocal.model.Product;
 
+import org.w3c.dom.Text;
+
 public class ViewUserAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ViewUserAccountActivity";
-    private TextView editProfile;
-    private TextView manageTransaction;
+    private Button editProfile;
+    private Button manageTransaction;
     private Button signOutButton;
     private ImageView userAvatar;
+    private TextView userDisplayName;
+    private TextView userEmail;
 
     FirebaseFirestore db;
     FirebaseAuth firebaseAuth;
@@ -56,12 +60,32 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         editProfile = findViewById ( R.id.edit_profile_btn );
         signOutButton = findViewById ( R.id.sign_out_btn );
         userAvatar = findViewById ( R.id.user_avatar );
+        userDisplayName = findViewById ( R.id.user_profile_display_name );
+        userEmail = findViewById ( R.id.user_profile_email );
 
-        Picasso.get ().load ( userProfileUri ).placeholder ( R.drawable.ic_profile_placeholder ).fit ().centerCrop ().into ( userAvatar );
+        Picasso.get ().load ( userProfileUri ).placeholder ( R.drawable.bart ).fit ().centerCrop ().into ( userAvatar );
+
 
         manageTransaction.setOnClickListener ( this );
         editProfile.setOnClickListener ( this );
         signOutButton.setOnClickListener ( this );
+    }
+
+    private void setUserInfo(final TextView userDisplayName, final TextView userEmail) {
+        Query query = db.collection ( "users" ).whereEqualTo ( "userId", currentUserId );
+        query.get()
+                .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful ()) {
+                            QuerySnapshot qs = task.getResult ();
+                            for(DocumentSnapshot document : qs) {
+                                userDisplayName.setText(document.get("userDisplayName").toString ());
+                                userEmail.setText (document.get("userEmail").toString () );
+                            }
+                        }
+                    }
+                } );
     }
 
 
@@ -70,7 +94,7 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         switch (view.getId ()) {
             case R.id.manage_transaction_btn:
                 Intent intent = new Intent ( ViewUserAccountActivity.this, ManageTransactionActivity.class );
-                startActivity(intent);
+                startActivity ( intent );
                 break;
             case R.id.edit_profile_btn:
                 break;
@@ -89,5 +113,6 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
         user = firebaseAuth.getCurrentUser ();
         currentUserId = user.getUid ();
         userProfileUri = user.getPhotoUrl ();
+        setUserInfo ( userDisplayName, userEmail );
     }
 }
