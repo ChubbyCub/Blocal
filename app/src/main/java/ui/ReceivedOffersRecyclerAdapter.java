@@ -20,13 +20,17 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Time;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import at.markushi.ui.CircleButton;
 
@@ -57,49 +61,57 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
         final CollectionReference offers = db.collection ( "offers" );
 
         final DocumentReference df = offers.document ( offerId );
-        df.get ()
-                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful ()) {
-                            DocumentSnapshot document = task.getResult ();
-                            String buyerId = document.get ( "buyerId" ).toString ();
 
-                            NumberFormat format = NumberFormat.getCurrencyInstance ();
-                            holder.offerAmount.setText ( format.format ( document.get ( "price" ) ) );
+        df.addSnapshotListener ( new EventListener<DocumentSnapshot> () {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if(e != null) {
+                    Log.e("ERROR:", e.getMessage ());
+                }
 
-                            String status = document.get ( "status" ).toString ();
+                if(documentSnapshot != null && documentSnapshot.exists ()) {
+                    String buyerId = documentSnapshot.get ( "buyerId" ).toString ();
 
-                            if (status.equals ( "accepted" )) {
-                                holder.acceptButton.setVisibility ( View.VISIBLE );
-                                holder.acceptButton.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
-                                holder.acceptButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
-                                holder.rejectButton.setVisibility ( View.INVISIBLE );
-                            }
+                    NumberFormat format = NumberFormat.getCurrencyInstance ();
+                    holder.offerAmount.setText ( format.format ( documentSnapshot.get ( "price" ) ) );
 
-                            if (status.equals ( "rejected" )) {
-                                holder.rejectButton.setVisibility ( View.VISIBLE );
-                                holder.rejectButton.setImageResource ( R.drawable.ic_deny_symbol );
-                                holder.rejectButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
-                                holder.acceptButton.setVisibility ( View.INVISIBLE );
-                            }
+                    String status = documentSnapshot.get ( "status" ).toString ();
 
-                            // query the database to find the matching buyer name
-                            DocumentReference buyer = db.collection ( "users" ).document ( buyerId );
-                            buyer.get ()
-                                    .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful ()) {
-                                                DocumentSnapshot document = task.getResult ();
-                                                String userDisplayName = document.get ( "userDisplayName" ).toString ();
-                                                holder.buyerName.setText ( userDisplayName );
-                                            }
-                                        }
-                                    } );
-                        }
+                    if(status.equals ( "pending" )) {
+                        holder.acceptButton.setVisibility ( View.VISIBLE );
+                        holder.rejectButton.setVisibility ( View.VISIBLE );
                     }
-                } );
+
+                    if (status.equals ( "accepted" )) {
+                        holder.acceptButton.setVisibility ( View.VISIBLE );
+                        holder.acceptButton.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
+                        holder.acceptButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
+                        holder.rejectButton.setVisibility ( View.INVISIBLE );
+                    }
+
+                    if (status.equals ( "rejected" )) {
+                        holder.rejectButton.setVisibility ( View.VISIBLE );
+                        holder.rejectButton.setImageResource ( R.drawable.ic_deny_symbol );
+                        holder.rejectButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
+                        holder.acceptButton.setVisibility ( View.INVISIBLE );
+                    }
+
+                    // query the database to find the matching buyer name
+                    DocumentReference buyer = db.collection ( "users" ).document ( buyerId );
+                    buyer.get ()
+                            .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful ()) {
+                                        DocumentSnapshot document = task.getResult ();
+                                        String userDisplayName = document.get ( "userDisplayName" ).toString ();
+                                        holder.buyerName.setText ( userDisplayName );
+                                    }
+                                }
+                            } );
+                }
+            }
+        } );
 
         handleAcceptOffer ( holder, df, offerId, offers );
         handleRejectOffer ( holder, df );
