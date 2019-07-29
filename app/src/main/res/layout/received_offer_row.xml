@@ -54,6 +54,8 @@
                 android:padding="10dp"
                 android:visibility="invisible"
                 android:src="@drawable/ic_accept_symbol"
+                android:clickable="true"
+                android:focusable="true"
                 app:cb_color="#228B22"
                 app:cb_pressedRingWidth="0dip" />
 
@@ -67,6 +69,8 @@
                 android:layout_marginTop="0dp"
                 android:visibility="invisible"
                 android:src="@drawable/ic_deny_for_button"
+                android:clickable="true"
+                android:focusable="true"
                 app:cb_color="#b50404"
                 app:cb_pressedRingWidth="0dip" />
         </RelativeLayout>

@@ -1,6 +1,8 @@
 package ui;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,11 +72,15 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
 
                             if (status.equals ( "accepted" )) {
                                 holder.acceptButton.setVisibility ( View.VISIBLE );
+                                holder.acceptButton.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
+                                holder.acceptButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
                                 holder.rejectButton.setVisibility ( View.INVISIBLE );
                             }
 
                             if (status.equals ( "rejected" )) {
                                 holder.rejectButton.setVisibility ( View.VISIBLE );
+                                holder.rejectButton.setImageResource ( R.drawable.ic_deny_symbol );
+                                holder.rejectButton.setColor ( Color.parseColor ( "#00FFFFFF" ) );
                                 holder.acceptButton.setVisibility ( View.INVISIBLE );
                             }
 
@@ -120,6 +126,7 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                     offers.document ( id ).update ( "status", "rejected" );
                 }
                 queryProduct ( df );
+                holder.acceptButton.setEnabled ( false );
             }
         } );
     }
@@ -146,6 +153,7 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
             public void onClick(View view) {
                 df.update ( "status", "rejected" );
                 df.update ( "dateUpdated", new Timestamp ( new Date () ) );
+                holder.rejectButton.setEnabled ( false );
             }
         } );
     }
