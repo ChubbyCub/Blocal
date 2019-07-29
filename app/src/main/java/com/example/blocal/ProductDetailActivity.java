@@ -47,6 +47,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -94,8 +95,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         makeOfferButton.setOnClickListener ( this );
         askSellerButton.setOnClickListener ( this );
 
-        DecimalFormat df = new DecimalFormat ( "#.##" );
-        productPrice.setText ( "$" + df.format ( product.getPrice () ) );
+        NumberFormat format = NumberFormat.getCurrencyInstance ();
+        productPrice.setText ( format.format ( product.getPrice () ) );
 
         setUserName ( product.getUserId () );
 
@@ -298,6 +299,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         GeoPoint currLoc = product.getCoordinates ();
         LatLng latLng = new LatLng ( currLoc.getLatitude (), currLoc.getLongitude () );
         mMap.moveCamera ( CameraUpdateFactory.newLatLng ( latLng ) );
-        mMap.animateCamera ( CameraUpdateFactory.zoomTo(17.0f) );
+        mMap.animateCamera ( CameraUpdateFactory.zoomTo ( 17.0f ) );
     }
 }

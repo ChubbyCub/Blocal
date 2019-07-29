@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRecyclerAdapter.ViewHolder> {
@@ -60,7 +61,8 @@ public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRe
                                     continue;
                                 }
 
-                                holder.myOffer.setText ( "My offer: " + document.get ( "price" ).toString () );
+                                NumberFormat format = NumberFormat.getCurrencyInstance ();
+                                holder.myOffer.setText ("My offer: " + format.format ( document.get ( "price" ) ) );
 
                                 String status = document.get ( "status" ).toString ();
                                 if (status.equals ( "pending" )) {

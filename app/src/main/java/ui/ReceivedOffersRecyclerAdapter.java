@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Time;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -61,20 +62,18 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
                         if (task.isSuccessful ()) {
                             DocumentSnapshot document = task.getResult ();
                             String buyerId = document.get ( "buyerId" ).toString ();
-                            holder.offerAmount.setText ( "$" + document.get ( "price" ).toString () );
 
-                            // set visibility of accept and deny button
+                            NumberFormat format = NumberFormat.getCurrencyInstance ();
+                            holder.offerAmount.setText ( format.format ( document.get ( "price" ) ) );
+
                             String status = document.get ( "status" ).toString ();
 
-                            // this list view did not get called again... that's why it never looked back here
                             if (status.equals ( "accepted" )) {
-                                Log.d(TAG, "does it go in here?");
                                 holder.acceptButton.setVisibility ( View.VISIBLE );
                                 holder.rejectButton.setVisibility ( View.INVISIBLE );
                             }
 
                             if (status.equals ( "rejected" )) {
-                                Log.d(TAG, "does it go in here?");
                                 holder.rejectButton.setVisibility ( View.VISIBLE );
                                 holder.acceptButton.setVisibility ( View.INVISIBLE );
                             }
@@ -99,7 +98,6 @@ public class ReceivedOffersRecyclerAdapter extends RecyclerView.Adapter<Received
         handleAcceptOffer ( holder, df, offerId, offers );
         handleRejectOffer ( holder, df );
     }
-
 
 
     private void handleAcceptOffer(@NonNull final ViewHolder holder,
