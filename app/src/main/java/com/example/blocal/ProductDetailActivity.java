@@ -180,7 +180,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 }
                 break;
             case R.id.ask_seller_button:
-                startActivity(new Intent (ProductDetailActivity.this, ChatActivity.class));
+                Intent intent = new Intent (ProductDetailActivity.this, ChatActivity.class);
+                intent.putExtra("productId", product.getProductId ());
+                intent.putExtra("sellerId", product.getUserId ());
+                startActivity(intent);
                 break;
         }
 

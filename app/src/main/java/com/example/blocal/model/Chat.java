@@ -14,15 +14,36 @@ public class Chat extends AbstractChat {
     private String mMessage;
     private String mUid;
     private Date mTimestamp;
+    private String mProductId;
+    private String mSellerUid;
 
     public Chat() {
         // Needed for Firebase
     }
 
-    public Chat(@Nullable String name, @Nullable String message, @NonNull String uid) {
+    public Chat(@Nullable String name, @Nullable String message, @NonNull String uid,
+                @NonNull String productId, @NonNull String sellerUid) {
         mName = name;
         mMessage = message;
         mUid = uid;
+        mProductId = productId;
+        mSellerUid = sellerUid;
+    }
+
+    public String getmProductId() {
+        return mProductId;
+    }
+
+    public void setmProductId(String mProductId) {
+        this.mProductId = mProductId;
+    }
+
+    public String getmSellerUid() {
+        return mSellerUid;
+    }
+
+    public void setmSellerUid(String mSellerUid) {
+        this.mSellerUid = mSellerUid;
     }
 
     @Override

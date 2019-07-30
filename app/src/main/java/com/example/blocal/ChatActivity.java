@@ -41,8 +41,9 @@ public class ChatActivity extends AppCompatActivity {
     private static final CollectionReference sChatCollection =
             FirebaseFirestore.getInstance().collection("chats");
     /** Get the last 50 chat messages ordered by timestamp . */
-    private static final Query sChatQuery =
-            sChatCollection.orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
+    // TODO: set the query for per product only. Don't show conversations about other products
+    private Query sChatQuery;
+
 
     static {
         FirebaseFirestore.setLoggingEnabled(true);
@@ -60,6 +61,8 @@ public class ChatActivity extends AppCompatActivity {
     // @BindView(R.id.emptyTextView)
     TextView mEmptyListMessage;
 
+    private String productId;
+    private String sellerId;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -68,6 +71,16 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_chat );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
+
+        productId = getIntent ().getStringExtra ("productId");
+        sellerId = getIntent ().getStringExtra ( "sellerId" );
+
+        sChatQuery = sChatCollection
+                .whereEqualTo ( "mProductId", productId )
+                .orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
+
+        Log.d(TAG, productId);
+        Log.d(TAG, sellerId);
 
         mRecyclerView = findViewById ( R.id.messagesList );
         mSendButton = findViewById ( R.id.sendButton );
@@ -137,7 +150,7 @@ public class ChatActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String name = "User " + uid.substring(0, 6);
 
-        onAddMessage(new Chat (name, mMessageEdit.getText().toString(), uid));
+        onAddMessage(new Chat (name, mMessageEdit.getText().toString(), uid, productId, sellerId));
 
         mMessageEdit.setText("");
     }
