@@ -27,8 +27,15 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,8 +49,7 @@ public class ChatActivity extends AppCompatActivity {
             FirebaseFirestore.getInstance().collection("chats");
     /** Get the last 50 chat messages ordered by timestamp . */
     // TODO: set the query for per product only. Don't show conversations about other products
-    private Query sChatQuery;
-
+    private static final Query sChatQuery = sChatCollection.orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
 
     static {
         FirebaseFirestore.setLoggingEnabled(true);
@@ -75,9 +81,21 @@ public class ChatActivity extends AppCompatActivity {
         productId = getIntent ().getStringExtra ("productId");
         sellerId = getIntent ().getStringExtra ( "sellerId" );
 
-        sChatQuery = sChatCollection
-                .whereEqualTo ( "mProductId", productId )
-                .orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
+        sChatQuery.addSnapshotListener ( new EventListener<QuerySnapshot> () {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if(e != null) {
+                    Log.e("ERROR", e.getMessage ());
+                }
+
+                if(queryDocumentSnapshots != null) {
+                    for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
+
+                    }
+                }
+            }
+        } );
+
 
         Log.d(TAG, productId);
         Log.d(TAG, sellerId);
@@ -114,7 +132,6 @@ public class ChatActivity extends AppCompatActivity {
         ImeHelper.setImeOnDoneListener(mMessageEdit, new ImeHelper.DonePressedListener() {
             @Override
             public void onDonePressed() {
-                Log.d(TAG, "After I click send, where does it go?");
                 onSendClick();
             }
         });
@@ -159,7 +176,7 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView.Adapter newAdapter() {
         FirestoreRecyclerOptions<Chat> options =
                 new FirestoreRecyclerOptions.Builder<Chat>()
-                        .setQuery(sChatQuery, Chat.class)
+                        .setQuery(sChatQuery.whereEqualTo ( "mProductId", productId ), Chat.class)
                         .setLifecycleOwner(this)
                         .build();
 
