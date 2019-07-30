@@ -27,6 +27,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.firebaseui:firebase-ui-firestore:5.0.0'
     implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
     implementation 'com.firebaseui:firebase-ui:0.6.2'
     implementation 'com.google.firebase:firebase-firestore:20.2.0'
@@ -54,6 +55,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.0.0'
     implementation 'com.github.markushi:circlebutton:1.1'
+    implementation 'com.jakewharton:butterknife:8.5.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

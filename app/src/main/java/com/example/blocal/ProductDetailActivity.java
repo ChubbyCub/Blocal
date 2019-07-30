@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -179,6 +180,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 }
                 break;
             case R.id.ask_seller_button:
+                startActivity(new Intent (ProductDetailActivity.this, ChatActivity.class));
                 break;
         }
 
