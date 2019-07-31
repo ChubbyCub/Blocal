@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,19 +44,24 @@ public class SellTransaction extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate ( R.layout.fragment_sell_transaction, container, false );
 
 
         db = FirebaseFirestore.getInstance ();
 
         Query query = db.collection ( "products" ).whereEqualTo ( "userId", currentUserId );
+
         query.get ()
                 .addOnCompleteListener ( new OnCompleteListener<QuerySnapshot> () {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful ()) {
                             QuerySnapshot qs = task.getResult ();
+                            if(qs.isEmpty ()) {
+                                view.findViewById ( R.id.sell_transaction_empty_message )
+                                        .setVisibility ( View.VISIBLE );
+                            }
                             for (QueryDocumentSnapshot document : qs) {
                                 Product product = new Product ();
                                 product.setProductId ( document.getId () );
@@ -67,6 +73,7 @@ public class SellTransaction extends Fragment {
                                 // pending offers from the database can be empty here...
                                 if (pendingOffers == null || pendingOffers.size () == 0) {
                                     product.setPendingOffers ( new ArrayList<String> () );
+
                                 } else {
                                     product.setPendingOffers ( pendingOffers );
                                 }
