@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.blocal.model.Offer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +26,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ui.SellListingRecyclerAdapter;
 import ui.SentOffersRecyclerAdapter;
@@ -42,31 +46,72 @@ public class BuyTransaction extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate ( R.layout.fragment_buy_transaction, container, false );
 
-
         db = FirebaseFirestore.getInstance ();
-        DocumentReference df = db.collection("users").document (currentUserId);
-        df.get()
+        DocumentReference df = db.collection ( "users" ).document ( currentUserId );
+        df.get ()
                 .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful ()) {
+                        if (task.isSuccessful ()) {
                             DocumentSnapshot document = task.getResult ();
-                            sentOffers = (ArrayList<String>) document.get("sentOffers");
-                            if(sentOffers.size() == 0 || sentOffers == null) {
-                                sentOffers = new ArrayList<>();
+                            sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
+                            if (sentOffers.size () == 0 || sentOffers == null) {
+                                sentOffers = new ArrayList<> ();
                             }
-                            RecyclerView mRecyclerView = view.findViewById ( R.id.buy_listing_recycler_view );
-                            mRecyclerView.setHasFixedSize ( true );
-                            mRecyclerView.setLayoutManager ( new LinearLayoutManager (getActivity ()));
-
-                            SentOffersRecyclerAdapter mAdapter = new SentOffersRecyclerAdapter ( getActivity (), sentOffers);
-                            mRecyclerView.setAdapter ( mAdapter );
-                            mAdapter.notifyDataSetChanged ();
+                            queryOffers ( sentOffers, view );
                         }
                     }
                 } );
 
         return view;
+    }
+
+    private void queryOffers(ArrayList<String> sentOffers, final View view) {
+        final ArrayList<Offer> offers = new ArrayList<> ();
+        for (String id : sentOffers) {
+            db.collection ( "offers" ).document ( id ).get ()
+                    .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful ()) {
+                                DocumentSnapshot document = task.getResult ();
+                                if (document.exists ()) {
+                                    Offer offer = document.toObject ( Offer.class );
+                                    offers.add ( offer );
+                                    sortOffersByUpdate ( offers, view );
+                                }
+                            }
+                        }
+                    } );
+        }
+    }
+
+    private void sortOffersByUpdate(ArrayList<Offer> offers, View view) {
+        Collections.sort ( offers, new Comparator<Offer> () {
+            @Override
+            public int compare(Offer offer1, Offer offer2) {
+                long time1 = offer1.getDateUpdated ().getSeconds ();
+                long time2 = offer2.getDateCreated ().getSeconds ();
+
+                if (time1 < time2) {
+                    return 1;
+                }
+
+                if (time1 > time2) {
+                    return -1;
+                }
+
+                return 0;
+            }
+        } );
+
+        RecyclerView mRecyclerView = view.findViewById ( R.id.buy_listing_recycler_view );
+        mRecyclerView.setHasFixedSize ( true );
+        mRecyclerView.setLayoutManager ( new LinearLayoutManager ( getActivity () ) );
+
+        SentOffersRecyclerAdapter mAdapter = new SentOffersRecyclerAdapter ( getActivity (), offers );
+        mRecyclerView.setAdapter ( mAdapter );
+        mAdapter.notifyDataSetChanged ();
     }
 
     @Override
