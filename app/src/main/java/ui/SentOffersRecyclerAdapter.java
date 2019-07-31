@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.blocal.R;
+import com.example.blocal.model.Offer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -32,9 +33,10 @@ import javax.annotation.Nullable;
 
 public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRecyclerAdapter.ViewHolder> {
     private Context context;
-    private List<String> sentOffers;
+    private List<Offer> sentOffers;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance ();
 
-    public SentOffersRecyclerAdapter(Context context, @NonNull List<String> sentOffers) {
+    public SentOffersRecyclerAdapter(Context context, @NonNull List<Offer> sentOffers) {
         this.context = context;
         this.sentOffers = sentOffers;
     }
@@ -49,58 +51,41 @@ public class SentOffersRecyclerAdapter extends RecyclerView.Adapter<SentOffersRe
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final String offerId = sentOffers.get ( position );
+        final Offer offer = sentOffers.get ( position );
 
         // query the database to find the matching price
-        final FirebaseFirestore db = FirebaseFirestore.getInstance ();
-        Query query = db.collection ( "offers" ).orderBy ( "dateUpdated", Query.Direction.DESCENDING );
-        query.addSnapshotListener ( new EventListener<QuerySnapshot> () {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e != null) {
-                    Log.e("ERROR:", e.getMessage ());
-                }
 
-                if(queryDocumentSnapshots != null) {
-                    for(QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        if(!documentSnapshot.getId().equals(offerId)) {
-                            continue;
+
+        NumberFormat format = NumberFormat.getCurrencyInstance ();
+        holder.myOffer.setText ( "My offer: " + format.format ( offer.getPrice () ) );
+
+        String status = offer.getStatus ();
+        if (status.equals ( "pending" )) {
+            holder.status.setImageResource ( R.drawable.ic_pending_status );
+        }
+
+        if (status.equals ( "accepted" )) {
+            holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
+        }
+
+        if (status.equals ( "rejected" )) {
+            holder.status.setImageResource ( R.drawable.ic_deny_symbol );
+        }
+
+        String productId = offer.getProductId ();
+        DocumentReference product = db.collection ( "products" ).document ( productId );
+        product.get ()
+                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful ()) {
+                            DocumentSnapshot document = task.getResult ();
+                            Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
+                                    .centerCrop ().into ( holder.productImage );
+                            holder.productName.setText ( document.get ( "name" ).toString () );
                         }
-
-                        NumberFormat format = NumberFormat.getCurrencyInstance ();
-                        holder.myOffer.setText ("My offer: " + format.format ( documentSnapshot.get ( "price" ) ) );
-
-                        String status = documentSnapshot.get ( "status" ).toString ();
-                        if (status.equals ( "pending" )) {
-                            holder.status.setImageResource ( R.drawable.ic_pending_status );
-                        }
-
-                        if (status.equals ( "accepted" )) {
-                            holder.status.setImageResource ( R.drawable.ic_soft_accept_sent_offer );
-                        }
-
-                        if (status.equals ( "rejected" )) {
-                            holder.status.setImageResource ( R.drawable.ic_deny_symbol );
-                        }
-
-                        String productId = documentSnapshot.get ( "productId" ).toString ();
-                        DocumentReference product = db.collection ( "products" ).document ( productId );
-                        product.get ()
-                                .addOnCompleteListener ( new OnCompleteListener<DocumentSnapshot> () {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful ()) {
-                                            DocumentSnapshot document = task.getResult ();
-                                            Picasso.get ().load ( document.get ( "photoURL" ).toString () ).fit ()
-                                                    .centerCrop ().into ( holder.productImage );
-                                            holder.productName.setText ( document.get ( "name" ).toString () );
-                                        }
-                                    }
-                                } );
                     }
-                }
-            }
-        } );
+                } );
     }
 
 
