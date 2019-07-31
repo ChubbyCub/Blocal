@@ -43,7 +43,7 @@ public class BuyTransaction extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate ( R.layout.fragment_buy_transaction, container, false );
 
         db = FirebaseFirestore.getInstance ();
@@ -57,6 +57,8 @@ public class BuyTransaction extends Fragment {
                             sentOffers = (ArrayList<String>) document.get ( "sentOffers" );
                             if (sentOffers.size () == 0 || sentOffers == null) {
                                 sentOffers = new ArrayList<> ();
+                                container.findViewById ( R.id.buy_transaction_empty_message )
+                                        .setVisibility ( View.VISIBLE );
                             }
                             queryOffers ( sentOffers, view );
                         }
