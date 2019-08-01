@@ -46,13 +46,15 @@ public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "FirestoreChatActivity";
 
     private static final CollectionReference sChatCollection =
-            FirebaseFirestore.getInstance().collection("chats");
-    /** Get the last 50 chat messages ordered by timestamp . */
+            FirebaseFirestore.getInstance ().collection ( "chats" );
+    /**
+     * Get the last 50 chat messages ordered by timestamp .
+     */
     // TODO: set the query for per product only. Don't show conversations about other products
-    private static final Query sChatQuery = sChatCollection.orderBy("timestamp", Query.Direction.DESCENDING).limit(50);
+    private Query sChatQuery;
 
     static {
-        FirebaseFirestore.setLoggingEnabled(true);
+        FirebaseFirestore.setLoggingEnabled ( true );
     }
 
     // @BindView(R.id.messagesList)
@@ -73,140 +75,133 @@ public class ChatActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "On create get called");
+        Log.d ( TAG, "On create get called" );
         super.onCreate ( savedInstanceState );
         setContentView ( R.layout.activity_chat );
         setRequestedOrientation ( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 
-        productId = getIntent ().getStringExtra ("productId");
+        productId = getIntent ().getStringExtra ( "productId" );
         sellerId = getIntent ().getStringExtra ( "sellerId" );
 
-        sChatQuery.addSnapshotListener ( new EventListener<QuerySnapshot> () {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if(e != null) {
-                    Log.e("ERROR", e.getMessage ());
-                }
-
-                if(queryDocumentSnapshots != null) {
-                    for(QueryDocumentSnapshot document : queryDocumentSnapshots) {
-
-                    }
-                }
-            }
-        } );
+        sChatQuery = sChatCollection
+                .whereEqualTo ( "mProductId", productId )
+                .whereEqualTo("uid", FirebaseAuth.getInstance ().getCurrentUser ().getUid())
+                .orderBy ( "timestamp", Query.Direction.DESCENDING ).limit ( 50 );
 
 
-        Log.d(TAG, productId);
-        Log.d(TAG, sellerId);
+        Log.d ( TAG, productId );
+        Log.d ( TAG, sellerId );
 
         mRecyclerView = findViewById ( R.id.messagesList );
         mSendButton = findViewById ( R.id.sendButton );
         mMessageEdit = findViewById ( R.id.messageEdit );
         mEmptyListMessage = findViewById ( R.id.emptyTextView );
 
-        ButterKnife.bind(this);
+        ButterKnife.bind ( this );
 
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setReverseLayout(true);
-        manager.setStackFromEnd(true);
+        LinearLayoutManager manager = new LinearLayoutManager ( this );
+        manager.setReverseLayout ( true );
+        manager.setStackFromEnd ( true );
 
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(manager);
+        mRecyclerView.setHasFixedSize ( true );
+        mRecyclerView.setLayoutManager ( manager );
 
-        mRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        mRecyclerView.addOnLayoutChangeListener ( new View.OnLayoutChangeListener () {
             @Override
             public void onLayoutChange(View view, int left, int top, int right, int bottom,
                                        int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 if (bottom < oldBottom) {
-                    mRecyclerView.postDelayed(new Runnable() {
+                    mRecyclerView.postDelayed ( new Runnable () {
                         @Override
                         public void run() {
-                            mRecyclerView.smoothScrollToPosition(0);
+                            mRecyclerView.smoothScrollToPosition ( 0 );
                         }
-                    }, 100);
+                    }, 100 );
                 }
             }
-        });
+        } );
 
-        ImeHelper.setImeOnDoneListener(mMessageEdit, new ImeHelper.DonePressedListener() {
+        ImeHelper.setImeOnDoneListener ( mMessageEdit, new ImeHelper.DonePressedListener () {
             @Override
             public void onDonePressed() {
-                onSendClick();
+                onSendClick ();
             }
-        });
+        } );
     }
 
     @Override
     public void onStart() {
-        super.onStart();
-        if (isSignedIn()) { attachRecyclerViewAdapter(); }
+        super.onStart ();
+        if (isSignedIn ()) {
+            attachRecyclerViewAdapter ();
+        }
     }
 
 
     private boolean isSignedIn() {
-        return FirebaseAuth.getInstance().getCurrentUser() != null;
+        return FirebaseAuth.getInstance ().getCurrentUser () != null;
     }
 
     private void attachRecyclerViewAdapter() {
-        final RecyclerView.Adapter adapter = newAdapter();
+        final RecyclerView.Adapter adapter = newAdapter ();
 
         // Scroll to bottom on new messages
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        adapter.registerAdapterDataObserver ( new RecyclerView.AdapterDataObserver () {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                mRecyclerView.smoothScrollToPosition(0);
+                mRecyclerView.smoothScrollToPosition ( 0 );
             }
-        });
+        } );
 
-        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter ( adapter );
     }
 
     @OnClick(R.id.sendButton)
     public void onSendClick() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String name = "User " + uid.substring(0, 6);
+        String uid = FirebaseAuth.getInstance ().getCurrentUser ().getUid ();
+        String name = "User " + uid.substring ( 0, 6 );
 
-        onAddMessage(new Chat (name, mMessageEdit.getText().toString(), uid, productId, sellerId));
+        onAddMessage ( new Chat ( name, mMessageEdit.getText ().toString (), uid, productId, sellerId ) );
 
-        mMessageEdit.setText("");
+        mMessageEdit.setText ( "" );
     }
 
     @NonNull
     private RecyclerView.Adapter newAdapter() {
         FirestoreRecyclerOptions<Chat> options =
-                new FirestoreRecyclerOptions.Builder<Chat>()
-                        .setQuery(sChatQuery.whereEqualTo ( "mProductId", productId ), Chat.class)
-                        .setLifecycleOwner(this)
-                        .build();
+                new FirestoreRecyclerOptions.Builder<Chat> ()
+                        .setQuery ( sChatQuery.whereEqualTo ( "mProductId", productId ), Chat.class )
+                        .setLifecycleOwner ( this )
+                        .build ();
 
-        return new FirestoreRecyclerAdapter<Chat, ChatHolder> (options) {
+        return new FirestoreRecyclerAdapter<Chat, ChatHolder> ( options ) {
             @NonNull
             @Override
             public ChatHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new ChatHolder( LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.message, parent, false));
+                return new ChatHolder ( LayoutInflater.from ( parent.getContext () )
+                        .inflate ( R.layout.message, parent, false ) );
             }
 
             @Override
             protected void onBindViewHolder(@NonNull ChatHolder holder, int position, @NonNull Chat model) {
-                holder.bind(model);
+                holder.bind ( model );
             }
 
             @Override
             public void onDataChanged() {
                 // If there are no chat messages, show a view that invites the user to add a message.
-                mEmptyListMessage.setVisibility(getItemCount() == 0 ? View.VISIBLE : View.GONE);
+                mEmptyListMessage.setVisibility ( getItemCount () == 0 ? View.VISIBLE : View.GONE );
             }
         };
     }
 
     private void onAddMessage(@NonNull Chat chat) {
-        sChatCollection.add(chat).addOnFailureListener(this, new OnFailureListener () {
+        sChatCollection.add ( chat ).addOnFailureListener ( this, new OnFailureListener () {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "Failed to write message", e);
+                Log.e ( TAG, "Failed to write message", e );
             }
-        });
+        } );
     }
+
 }
