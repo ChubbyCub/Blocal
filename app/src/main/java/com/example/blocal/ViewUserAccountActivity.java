@@ -36,6 +36,7 @@ import org.w3c.dom.Text;
 public class ViewUserAccountActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ViewUserAccountActivity";
     private Button editProfile;
+    private Button viewConversation;
     private Button manageTransaction;
     private Button signOutButton;
     private ImageView userAvatar;
@@ -95,6 +96,10 @@ public class ViewUserAccountActivity extends AppCompatActivity implements View.O
             case R.id.manage_transaction_btn:
                 Intent intent = new Intent ( ViewUserAccountActivity.this, ManageTransactionActivity.class );
                 startActivity ( intent );
+                break;
+            case R.id.view_conversation_btn:
+                Intent secondIntent = new Intent(ViewUserAccountActivity.this, ManageConversationActivity.class);
+                startActivity(secondIntent);
                 break;
             case R.id.edit_profile_btn:
                 break;

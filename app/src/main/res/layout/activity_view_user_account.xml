@@ -8,9 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="413dp"
-        android:layout_height="249dp"
-        android:layout_marginTop="0dp"
+        android:layout_width="411dp"
+        android:layout_height="222dp"
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -21,7 +20,7 @@
         android:id="@+id/user_avatar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="168dp"
         app:civ_border_color="@color/quantum_black_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.051"
@@ -30,11 +29,12 @@
 
     <RelativeLayout
         android:layout_width="404dp"
-        android:layout_height="188dp"
+        android:layout_height="135dp"
         android:layout_margin="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/manage_transaction_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
         <TextView
             android:id="@+id/user_profile_display_name"
@@ -51,12 +51,30 @@
             android:id="@+id/user_profile_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="12dp"
+            android:layout_marginBottom="28dp"
             android:text="User Email"
             android:textSize="15sp" />
 
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/view_conversation_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_marginBottom="140dp"
+        android:background="@drawable/custom_border"
+        android:gravity="start|center_vertical"
+        android:padding="10dp"
+        android:text="Current conversations"
+        android:textSize="15sp"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/manage_transaction_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/manage_transaction_btn"
