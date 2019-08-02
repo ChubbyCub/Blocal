@@ -93,7 +93,7 @@ public class BuyTransaction extends Fragment {
             @Override
             public int compare(Offer offer1, Offer offer2) {
                 long time1 = offer1.getDateUpdated ().getSeconds ();
-                long time2 = offer2.getDateCreated ().getSeconds ();
+                long time2 = offer2.getDateUpdated ().getSeconds ();
 
                 if (time1 < time2) {
                     return 1;

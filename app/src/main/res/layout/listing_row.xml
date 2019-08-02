@@ -14,10 +14,12 @@
         >
         <ImageView
             android:id="@+id/listing_thumbnail"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_column="0"
+            android:layout_gravity="center"
             android:src="@drawable/ic_image_placeholder"
             />
 
@@ -33,19 +35,45 @@
             android:textStyle="bold"
             />
 
-        <Button
-            android:id="@+id/see_all_offers_btn"
-            android:layout_width="wrap_content"
+        <LinearLayout
             android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginEnd="5dp"
-            android:layout_gravity="end|center"
-            android:background="@drawable/custom_button_filling"
-            android:textSize="12sp"
-            android:elevation="0dp"
-            android:textColor="@android:color/white"
-            android:text="See all offers"/>
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <Button
+                android:id="@+id/see_all_offers_btn"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="end|center"
+                android:background="@drawable/custom_button_filling"
+                android:textSize="10sp"
+                android:elevation="0dp"
+                android:textColor="@android:color/white"
+                android:text="See all offers"/>
+
+            <Button
+                android:id="@+id/see_all_inquiries"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="end|center"
+                android:background="@drawable/custom_button_filling"
+                android:textSize="10sp"
+                android:elevation="0dp"
+                android:textColor="@android:color/white"
+                android:text="See all inquiries"/>
+
+        </LinearLayout>
+
+
+
     </GridLayout>
 
 </androidx.cardview.widget.CardView>

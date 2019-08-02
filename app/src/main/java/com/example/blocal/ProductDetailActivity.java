@@ -96,6 +96,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         makeOfferButton.setOnClickListener ( this );
         askSellerButton.setOnClickListener ( this );
 
+
+
         NumberFormat format = NumberFormat.getCurrencyInstance ();
         productPrice.setText ( format.format ( product.getPrice () ) );
 
@@ -180,10 +182,17 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 }
                 break;
             case R.id.ask_seller_button:
-                Intent intent = new Intent (ProductDetailActivity.this, ChatActivity.class);
-                intent.putExtra("productId", product.getProductId ());
-                intent.putExtra("sellerId", product.getUserId ());
-                startActivity(intent);
+                if (product.getUserId ().equals ( currentUserId )) {
+                    askSellerButton.setEnabled ( false );
+                    Toast.makeText ( ProductDetailActivity.this, "You cannot chat because you" +
+                            "are the seller on this product", Toast.LENGTH_SHORT ).show();
+                    break;
+                }
+
+                Intent intent = new Intent ( ProductDetailActivity.this, ChatActivity.class );
+                intent.putExtra ( "productId", product.getProductId () );
+                intent.putExtra ( "sellerId", product.getUserId () );
+                startActivity ( intent );
                 break;
         }
 
